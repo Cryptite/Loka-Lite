@@ -1,0 +1,24 @@
+name: LokaLite
+main: com.cryptite.lite.LokaLite
+version: 1.0
+author: Cryptite
+depend:
+commands:
+  pvp:
+     description: pvp?
+     usage: /pvp
+  leave:
+     description: Leave the match
+     usage: /leave
+  p:
+     description: Public chat
+     usage: /p
+  t:
+     description: Town chat
+     usage: /t
+  a:
+     description: Alliance chat
+     usage: /a
+  shutdown:
+       description: Sends all players back to Loka before restart
+       usage: /shutdown
