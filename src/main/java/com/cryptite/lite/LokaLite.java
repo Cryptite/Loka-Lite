@@ -65,7 +65,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
         pm.registerEvents(new PlayerJoinListener(this), this);
         pm.registerEvents(new PlayerQuitListener(this), this);
-        pm.registerEvents(new PlayerDeathListener(this), this);
         pm.registerEvents(new PlayerDamageListener(), this);
         pm.registerEvents(new PlayerInteractListener(), this);
         pm.registerEvents(new PlayerChatListener(this), this);

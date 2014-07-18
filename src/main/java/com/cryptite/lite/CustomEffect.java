@@ -1,8 +1,8 @@
 package com.cryptite.lite;
 
-import net.minecraft.server.v1_7_R3.PacketPlayOutWorldParticles;
+import net.minecraft.server.v1_7_R4.PacketPlayOutWorldParticles;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;

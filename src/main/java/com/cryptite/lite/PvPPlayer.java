@@ -50,7 +50,7 @@ public class PvPPlayer {
     private long deserterTime = 0;
     public int prowess = 0;
 
-    //Info notifications
+    //Info notifications2
     private Boolean info_firstTimeArena = false;
     private Boolean info_firstTimeBG = false;
 

@@ -162,17 +162,9 @@ public class Bungee implements PluginMessageListener, Listener {
         PlayerStats stats = new Gson().fromJson(msg, PlayerStats.class);
         PvPPlayer p = plugin.getAccount(stats.name);
         p.rank = stats.rank;
-        p.talents = stats.talents;
         p.talentsSaved = stats.talentsSaved;
         p.town = stats.town;
         p.alliance = stats.alliance;
-        //They may not have any talents yet.
-        if (p.talents.size() > 0) {
-            p.loadTalents(p.talentsToString());
-        }
-//        log.info("Received stats for " + p.name + " with " + p.talents.size() + " talents saved:" + p.talentsSaved);
-//        log.info("town: " + p.town + ", rank: " + p.townRank);
-//        p.save();
     }
 
     void unlockAchievement(String name, Achievement achievement) {
