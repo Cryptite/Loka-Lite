@@ -9,6 +9,9 @@ import org.mcsg.double0negative.tabapi.TabAPI;
 
 import java.util.logging.Logger;
 
+import static org.bukkit.ChatColor.GRAY;
+import static org.bukkit.ChatColor.YELLOW;
+
 public class PlayerJoinListener implements Listener {
     private final Logger log = Logger.getLogger("Artifact-Join");
     private final LokaLite plugin;
@@ -19,11 +22,10 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        final String player = event.getPlayer().getName();
-
         //Wipe inventory and armor always
         event.getPlayer().getInventory().clear();
         event.getPlayer().getInventory().setArmorContents(null);
+        event.getPlayer().setFlying(true);
 
         //Wipe Tab list stuff
         TabAPI.setPriority(plugin, event.getPlayer(), -2);
@@ -33,6 +35,9 @@ public class PlayerJoinListener implements Listener {
 
         //We don't announce joins to the pvp server.
         event.setJoinMessage("");
+
+        event.getPlayer().sendMessage(GRAY + "You have entered the ether, a zone that exists in no specific time or place. You are free to explore, but your interactions with this plane are restricted.");
+        event.getPlayer().sendMessage(GRAY + "You may use " + YELLOW + "/leave " + GRAY + "at any time to return to Loka.");
     }
 
     private void checkGracePeriod() {
@@ -46,12 +51,9 @@ public class PlayerJoinListener implements Listener {
 
         //After a second, grace period can terminate.
         plugin.getServer().getScheduler().runTaskLater(plugin,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        log.info("Deactivating chat grace period");
-                        plugin.bungee.muteChatFromLoka = false;
-                    }
+                () -> {
+                    log.info("Deactivating chat grace period");
+                    plugin.bungee.muteChatFromLoka = false;
                 }, 20
         );
     }

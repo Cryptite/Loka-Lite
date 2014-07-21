@@ -36,7 +36,7 @@ public class Bungee implements PluginMessageListener, Listener {
 
     public Bungee(LokaLite plugin) {
         this.plugin = plugin;
-        serverName = "pvp";
+        serverName = "oldworld";
         plugin.server.getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
         plugin.server.getMessenger().registerIncomingPluginChannel(plugin, "BungeeCord", this);
     }
@@ -54,14 +54,10 @@ public class Bungee implements PluginMessageListener, Listener {
 
             //Players may fail to switch servers after the timeout length, so, 2 seconds after the timeout would occur,
             //try to send them again automatically.
-            plugin.scheduler.runTaskLater(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    if (p.isOnline()) {
-                        checkPlayerWasSent(p.getName());
-                    }
+            plugin.scheduler.runTaskLater(plugin, () -> {
+                if (p.isOnline()) {
+                    checkPlayerWasSent(p.getName());
                 }
-
             }, 20 * (bungeeServerTimeout + 2));
         }
     }
