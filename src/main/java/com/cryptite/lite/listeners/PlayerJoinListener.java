@@ -1,11 +1,10 @@
 package com.cryptite.lite.listeners;
 
 import com.cryptite.lite.LokaLite;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.mcsg.double0negative.tabapi.TabAPI;
 
 import java.util.logging.Logger;
 
@@ -20,24 +19,29 @@ public class PlayerJoinListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        //Wipe inventory and armor always
-        event.getPlayer().getInventory().clear();
-        event.getPlayer().getInventory().setArmorContents(null);
-        event.getPlayer().setFlying(true);
+        Player player = event.getPlayer();
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setExp(0);
+        player.setLevel(0);
+        player.teleport(plugin.spawn);
+        player.setFlying(true);
 
         //Wipe Tab list stuff
-        TabAPI.setPriority(plugin, event.getPlayer(), -2);
+//        TabAPI.setPriority(plugin, event.getPlayer(), -2);
 
         //Check for chat spam grace period
         checkGracePeriod();
 
         //We don't announce joins to the pvp server.
-        event.setJoinMessage("");
+        event.setJoinMessage(YELLOW + event.getPlayer().getName() + GRAY + " has entered the ether.");
 
-        event.getPlayer().sendMessage(GRAY + "You have entered the ether, a zone that exists in no specific time or place. You are free to explore, but your interactions with this plane are restricted.");
-        event.getPlayer().sendMessage(GRAY + "You may use " + YELLOW + "/leave " + GRAY + "at any time to return to Loka.");
+        player.sendMessage(GRAY + "You have entered the ether, a zone that exists in no specific time or place. You are free to explore, but your interactions with this plane are restricted.");
+        player.sendMessage(GRAY + "You may use " + YELLOW + "/leave " + GRAY + "at any time to return to Loka.");
+
+        plugin.getAccount(player.getName());
     }
 
     private void checkGracePeriod() {

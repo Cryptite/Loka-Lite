@@ -1,12 +1,11 @@
 package com.cryptite.lite.bungee;
 
 import com.cryptite.lite.LokaLite;
-import com.cryptite.lite.PvPPlayer;
+import com.cryptite.lite.db.Chat;
 import mkremins.fanciful.FancyMessage;
 import net.minecraft.util.com.google.common.io.ByteArrayDataOutput;
 import net.minecraft.util.com.google.common.io.ByteStreams;
 import net.minecraft.util.com.google.gson.Gson;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -72,13 +71,13 @@ public class Bungee implements PluginMessageListener, Listener {
         }
     }
 
-    public void sendMessage(String message, String channel) {
+    public void sendMessage(String bungeeChannel, String message, String channel) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
         byte[] data = message.getBytes();
         try {
             out.writeUTF("Forward");
-            out.writeUTF("loka"); // Target Server
+            out.writeUTF(bungeeChannel); // Target Server
 
             /* A "subchannel" much like Forward, Connect, etc. Think of it as a way of identifying what plugin sent the message to Bungee, I guess? It's mainly for plugin communication between servers I'd say */
             out.writeUTF(channel);
@@ -101,16 +100,6 @@ public class Bungee implements PluginMessageListener, Listener {
             String msg = in.readUTF();
             if (channelIn.equalsIgnoreCase("Chat")) {
                 parseChatMessage(msg);
-            } else if (channelIn.equalsIgnoreCase("AllianceChat")) {
-                parseAllianceChatMessage(msg);
-            } else if (channelIn.equals("PlayerDisconnect")) {
-                if (muteChatFromLoka) return;
-                plugin.globalChatMessage(ChatColor.YELLOW + msg + " left Loka.", true);
-            } else if (channelIn.equals("PlayerConnect")) {
-                if (muteChatFromLoka) return;
-                plugin.globalChatMessage(ChatColor.YELLOW + msg + " joined Loka.", true);
-            } else if (channelIn.equalsIgnoreCase("PlayerStats")) {
-                parsePlayerStats(msg);
             } else if (channelIn.equals("PlayerCount")) {
                 sendPlayerList();
             } else if (channelIn.equals("Achievement")) {
@@ -130,7 +119,7 @@ public class Bungee implements PluginMessageListener, Listener {
         for (Player p : plugin.server.getOnlinePlayers()) {
             b.append(p.getName()).append(",");
         }
-        sendMessage(b.toString(), "PlayerCount");
+        sendMessage("loka", b.toString(), "PlayerCount");
     }
 
     void parseChatMessage(String msg) {
@@ -138,29 +127,7 @@ public class Bungee implements PluginMessageListener, Listener {
         if (muteChatFromLoka) return;
 
         Chat chat = new Gson().fromJson(msg, Chat.class);
-        if (chat.town == null) {
-            log.info("[Loka-Chat] " + ChatColor.stripColor(plugin.parseChatMessage(chat)));
-            plugin.globalChatMessage(plugin.parseChatMessage(chat), true);
-        } else {
-            plugin.townChatMessage(chat);
-        }
-    }
-
-    void parseAllianceChatMessage(String msg) {
-        //No chat allowed during the grace period.
-        if (muteChatFromLoka) return;
-
-        AllianceChat chat = new Gson().fromJson(msg, AllianceChat.class);
-        plugin.allianceChatMessage(chat);
-    }
-
-    void parsePlayerStats(String msg) {
-        PlayerStats stats = new Gson().fromJson(msg, PlayerStats.class);
-        PvPPlayer p = plugin.getAccount(stats.name);
-        p.rank = stats.rank;
-        p.talentsSaved = stats.talentsSaved;
-        p.town = stats.town;
-        p.alliance = stats.alliance;
+        plugin.chat.sendMessage(chat, false);
     }
 
     void unlockAchievement(String name, Achievement achievement) {

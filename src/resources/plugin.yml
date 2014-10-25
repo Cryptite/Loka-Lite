@@ -19,6 +19,9 @@ commands:
   a:
      description: Alliance chat
      usage: /a
+  o:
+     description: Admin Chat
+     usage: /o
   shutdown:
        description: Sends all players back to Loka before restart
        usage: /shutdown
