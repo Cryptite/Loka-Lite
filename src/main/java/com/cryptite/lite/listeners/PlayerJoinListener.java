@@ -27,7 +27,7 @@ public class PlayerJoinListener implements Listener {
         player.setExp(0);
         player.setLevel(0);
         player.teleport(plugin.spawn);
-        player.setFlying(true);
+//        player.setFlying(true);
 
         //Wipe Tab list stuff
 //        TabAPI.setPriority(plugin, event.getPlayer(), -2);
