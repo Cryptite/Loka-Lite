@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import static org.bukkit.ChatColor.*;
+import static org.bukkit.ChatColor.GRAY;
 
 public class LokaLite extends JavaPlugin implements CommandExecutor {
     private final Logger log = Logger.getLogger("LokaLite");
@@ -62,6 +62,10 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         spawn = new Location(world, 415, 44, 660);
 
         chat = new ChatManager(this, bungee);
+        getCommand("p").setExecutor(chat);
+        getCommand("t").setExecutor(chat);
+        getCommand("a").setExecutor(chat);
+        getCommand("o").setExecutor(chat);
 
         pm.registerEvents(new PlayerJoinListener(this), this);
         pm.registerEvents(new PlayerQuitListener(this), this);
@@ -102,57 +106,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         if (commandLabel.equalsIgnoreCase("pvp")) {
             if (args[0].equalsIgnoreCase("generic")) {
             }
-        } else if (commandLabel.equalsIgnoreCase("p")) {
-            if (args.length < 1) {
-                player.sendMessage(GRAY + "Talk in public chat instead of team chat.");
-                player.sendMessage(AQUA + "Usage: " +
-                        YELLOW + "/p <message>" + AQUA + ".");
-                return true;
-            }
-
-            chat.sendMessage(player.getName(), "public", args, true);
-            return true;
-        } else if (commandLabel.equalsIgnoreCase("t")) {
-            if (args.length < 1) {
-                player.sendMessage(GRAY + "Talk in town chat.");
-                player.sendMessage(AQUA + "Usage: " +
-                        YELLOW + "/t <message>" + AQUA + ".");
-                return true;
-            } else if (getAccount(player.getName()).town == null) {
-                player.sendMessage(GRAY + "You must be in a town to do this");
-                return true;
-            }
-
-            chat.sendMessage(player.getName(), "town", args, true);
-            return true;
-        } else if (commandLabel.equalsIgnoreCase("a")) {
-            if (args.length < 1) {
-                player.sendMessage(GRAY + "Talk in alliance chat.");
-                player.sendMessage(AQUA + "Usage: " +
-                        YELLOW + "/a <message>" + AQUA + ".");
-                return true;
-            } else if (getAccount(player.getName()).town == null) {
-                player.sendMessage(GRAY + "You must be in a town to do this");
-                return true;
-            } else if (getAccount(player.getName()).town.alliance == null) {
-                player.sendMessage(GRAY + "You must be in an alliance to do this");
-                return true;
-            }
-
-            chat.sendMessage(player.getName(), "alliance", args, true);
-
-            return true;
-        } else if (commandLabel.equalsIgnoreCase("o")) {
-            if (args.length < 1) {
-                player.sendMessage(GRAY + "Talk in admin chat.");
-                player.sendMessage(AQUA + "Usage: " +
-                        YELLOW + "/o <message>" + AQUA + ".");
-                return true;
-            } else if (player != null && !isAdmin(player)) return true;
-
-            chat.sendMessage(player.getName(), "admin", args, true);
-
-            return true;
         } else if (commandLabel.equalsIgnoreCase("leave")) {
             bungee.sendPlayer(player);
         } else if (commandLabel.equalsIgnoreCase("shutdown")) {
@@ -184,9 +137,5 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
             towns.put(name, t);
             return t;
         }
-    }
-
-    private Boolean isAdmin(Player p) {
-        return p != null && p.getName().equals("Cryptite");
     }
 }

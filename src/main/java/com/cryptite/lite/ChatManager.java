@@ -3,18 +3,81 @@ package com.cryptite.lite;
 import com.cryptite.lite.bungee.Bungee;
 import com.cryptite.lite.db.Chat;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.entity.Player;
 
 import static org.bukkit.ChatColor.*;
 
-public class ChatManager {
+public class ChatManager implements CommandExecutor {
     private LokaLite plugin;
     private Bungee bungee;
 
     public ChatManager(LokaLite plugin, Bungee bungee) {
         this.plugin = plugin;
         this.bungee = bungee;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
+        if (!(commandSender instanceof Player)) return false;
+        Player player = (Player) commandSender;
+
+        if (commandLabel.equalsIgnoreCase("p")) {
+            if (args.length < 1) {
+                player.sendMessage(GRAY + "Talk in public chat instead of team chat.");
+                player.sendMessage(AQUA + "Usage: " +
+                        YELLOW + "/p <message>" + AQUA + ".");
+                return true;
+            }
+
+            sendMessage(player.getName(), "public", args, true);
+            return true;
+        } else if (commandLabel.equalsIgnoreCase("t")) {
+            if (args.length < 1) {
+                player.sendMessage(GRAY + "Talk in town chat.");
+                player.sendMessage(AQUA + "Usage: " +
+                        YELLOW + "/t <message>" + AQUA + ".");
+                return true;
+            } else if (plugin.getAccount(player.getName()).town == null) {
+                player.sendMessage(GRAY + "You must be in a town to do this");
+                return true;
+            }
+
+            sendMessage(player.getName(), "town", args, true);
+            return true;
+        } else if (commandLabel.equalsIgnoreCase("a")) {
+            if (args.length < 1) {
+                player.sendMessage(GRAY + "Talk in alliance chat.");
+                player.sendMessage(AQUA + "Usage: " +
+                        YELLOW + "/a <message>" + AQUA + ".");
+                return true;
+            } else if (plugin.getAccount(player.getName()).town == null) {
+                player.sendMessage(GRAY + "You must be in a town to do this");
+                return true;
+            } else if (plugin.getAccount(player.getName()).town.alliance == null) {
+                player.sendMessage(GRAY + "You must be in an alliance to do this");
+                return true;
+            }
+
+            sendMessage(player.getName(), "alliance", args, true);
+
+            return true;
+        } else if (commandLabel.equalsIgnoreCase("o")) {
+            if (args.length < 1) {
+                player.sendMessage(GRAY + "Talk in admin chat.");
+                player.sendMessage(AQUA + "Usage: " +
+                        YELLOW + "/o <message>" + AQUA + ".");
+                return true;
+            } else if (!isAdmin(plugin.getAccount(player.getName()))) return true;
+
+            sendMessage(player.getName(), "admin", args, true);
+
+            return true;
+        }
+        return true;
     }
 
     public void sendMessage(Chat chat, Boolean outgoing) {
