@@ -1,6 +1,7 @@
 package com.cryptite.lite.listeners;
 
 import com.cryptite.lite.LokaLite;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +37,7 @@ public class PlayerJoinListener implements Listener {
         checkGracePeriod();
 
         //We don't announce joins to the pvp server.
+        String msg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("joinmessage", ""));
         event.setJoinMessage(YELLOW + event.getPlayer().getName() + GRAY + " has entered the ether.");
 
         player.sendMessage(GRAY + "You have entered the ether, a zone that exists in no specific time or place. You are free to explore, but your interactions with this plane are restricted.");

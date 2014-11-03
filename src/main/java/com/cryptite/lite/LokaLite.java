@@ -46,13 +46,14 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Bungee bungee;
     public Location spawn;
     public ChatManager chat;
-    private MongoClient mongoClient;
     public DB db;
+    public ConfigFile config
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();
         server = getServer();
         scheduler = server.getScheduler();
+        config = new ConfigFile(this, "config");
 
         //Bungee proxy stuff
         bungee = new Bungee(this);
@@ -69,11 +70,24 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
         pm.registerEvents(new PlayerJoinListener(this), this);
         pm.registerEvents(new PlayerQuitListener(this), this);
-        pm.registerEvents(new PlayerDamageListener(), this);
-        pm.registerEvents(new PlayerInteractListener(), this);
         pm.registerEvents(new PlayerChatListener(this), this);
 
         initDbPool();
+
+        //Config related stuff
+        if (!Boolean.parseBoolean(config.get("settings.build", false))) {
+            System.out.println("[SETTINGS] Interactions disabled");
+            pm.registerEvents(new PlayerInteractListener(), this);
+        } else {
+            System.out.println("[SETTINGS] Interactions allowed");
+        }
+
+        if (!Boolean.parseBoolean(config.get("settings.pvp", false))) {
+            System.out.println("[SETTINGS] PvP disabled");
+            pm.registerEvents(new PlayerDamageListener(), this);
+        } else {
+            System.out.println("[SETTINGS] PvP allowed");
+        }
 
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
@@ -84,7 +98,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
     private void initDbPool() {
         try {
-            mongoClient = new MongoClient("iron.minecraftarium.com", 27017);
+            MongoClient mongoClient = new MongoClient("iron.minecraftarium.com", 27017);
             db = mongoClient.getDB("loka");
             System.out.println("[DB] Connected to Master DB");
         } catch (UnknownHostException e) {
