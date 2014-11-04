@@ -77,6 +77,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         initDbPool();
 
         status = new Status(this);
+        pm.registerEvents(status, this);
 
         //Config related stuff
         if (!Boolean.parseBoolean(config.get("settings.build", false))) {
