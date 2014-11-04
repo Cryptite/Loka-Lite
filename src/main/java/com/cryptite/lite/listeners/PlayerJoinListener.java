@@ -9,9 +9,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.logging.Logger;
 
-import static org.bukkit.ChatColor.GRAY;
-import static org.bukkit.ChatColor.YELLOW;
-
 public class PlayerJoinListener implements Listener {
     private final Logger log = Logger.getLogger("Artifact-Join");
     private final LokaLite plugin;
@@ -27,21 +24,16 @@ public class PlayerJoinListener implements Listener {
         player.setFoodLevel(20);
         player.setExp(0);
         player.setLevel(0);
-        player.teleport(plugin.spawn);
-//        player.setFlying(true);
-
-        //Wipe Tab list stuff
-//        TabAPI.setPriority(plugin, event.getPlayer(), -2);
+        if (Boolean.parseBoolean(plugin.config.get("settings.adjustspawn", false))) player.teleport(plugin.spawn);
 
         //Check for chat spam grace period
         checkGracePeriod();
 
-        //We don't announce joins to the pvp server.
-        String msg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("joinmessage", ""));
-        event.setJoinMessage(YELLOW + event.getPlayer().getName() + GRAY + " has entered the ether.");
+        String joinMsg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("joinmessage", ""));
+        event.setJoinMessage(joinMsg.replace("<player>", event.getPlayer().getName()));
 
-        player.sendMessage(GRAY + "You have entered the ether, a zone that exists in no specific time or place. You are free to explore, but your interactions with this plane are restricted.");
-        player.sendMessage(GRAY + "You may use " + YELLOW + "/leave " + GRAY + "at any time to return to Loka.");
+        String msg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("welcomemessage", ""));
+        player.sendMessage(msg);
 
         plugin.getAccount(player.getName());
     }

@@ -47,13 +47,13 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location spawn;
     public ChatManager chat;
     public DB db;
-    public ConfigFile config
+    public ConfigFile config;
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();
         server = getServer();
         scheduler = server.getScheduler();
-        config = new ConfigFile(this, "config");
+        config = new ConfigFile(this, "config.yml");
 
         //Bungee proxy stuff
         bungee = new Bungee(this);
