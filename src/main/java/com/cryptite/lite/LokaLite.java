@@ -48,6 +48,8 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public ChatManager chat;
     public DB db;
     public ConfigFile config;
+    private Status status;
+    public String serverName = "build";
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();
@@ -74,6 +76,8 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
         initDbPool();
 
+        status = new Status(this);
+
         //Config related stuff
         if (!Boolean.parseBoolean(config.get("settings.build", false))) {
             System.out.println("[SETTINGS] Interactions disabled");
@@ -88,6 +92,8 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         } else {
             System.out.println("[SETTINGS] PvP allowed");
         }
+
+        serverName = config.get("servername", "build");
 
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
