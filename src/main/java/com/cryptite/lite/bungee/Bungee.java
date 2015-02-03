@@ -2,10 +2,10 @@ package com.cryptite.lite.bungee;
 
 import com.cryptite.lite.LokaLite;
 import com.cryptite.lite.db.Chat;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 import mkremins.fanciful.FancyMessage;
-import net.minecraft.util.com.google.common.io.ByteArrayDataOutput;
-import net.minecraft.util.com.google.common.io.ByteStreams;
-import net.minecraft.util.com.google.gson.Gson;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

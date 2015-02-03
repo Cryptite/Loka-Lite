@@ -5,6 +5,8 @@ import com.cryptite.lite.db.Town;
 import com.cryptite.lite.listeners.*;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -18,12 +20,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
+import static com.mongodb.MongoCredential.createMongoCRCredential;
 import static org.bukkit.ChatColor.GRAY;
 
 public class LokaLite extends JavaPlugin implements CommandExecutor {
@@ -105,9 +105,12 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
     private void initDbPool() {
         try {
-            MongoClient mongoClient = new MongoClient("iron.minecraftarium.com", 27017);
+            MongoClient mongoClient;
+            String username = config.get("db.user", "");
+            String pass = config.get("db.password", "");
+            MongoCredential credential = createMongoCRCredential(username, "loka", pass.toCharArray());
+            mongoClient = new MongoClient(new ServerAddress("steel.minecraftarium.com"), Arrays.asList(credential));
             db = mongoClient.getDB("loka");
-            System.out.println("[DB] Connected to Master DB");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

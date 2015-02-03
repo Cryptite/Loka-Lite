@@ -2,11 +2,11 @@ package com.cryptite.lite;
 
 import com.cryptite.lite.bungee.Bungee;
 import com.cryptite.lite.db.Chat;
+import com.google.gson.Gson;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.entity.Player;
 
 import static org.bukkit.ChatColor.*;
