@@ -109,7 +109,10 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
             String username = config.get("db.user", "");
             String pass = config.get("db.password", "");
             MongoCredential credential = createMongoCRCredential(username, "loka", pass.toCharArray());
+
+            System.out.println("[DB] Connecting to steel.minecraftarium.com");
             mongoClient = new MongoClient(new ServerAddress("steel.minecraftarium.com"), Arrays.asList(credential));
+
             db = mongoClient.getDB("loka");
         } catch (UnknownHostException e) {
             e.printStackTrace();

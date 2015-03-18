@@ -24,6 +24,7 @@ public class PlayerJoinListener implements Listener {
         player.setFoodLevel(20);
         player.setExp(0);
         player.setLevel(0);
+        player.setAllowFlight(true);
         if (Boolean.parseBoolean(plugin.config.get("settings.adjustspawn", false))) player.teleport(plugin.spawn);
 
         //Check for chat spam grace period

@@ -14,6 +14,7 @@ public class Account {
     private final LokaLite plugin;
 
     public final String name;
+    private final DBData data;
     public UUID uuid;
     public Town town;
 
@@ -22,32 +23,44 @@ public class Account {
     public Account(LokaLite plugin, String name) {
         this.name = name;
         this.plugin = plugin;
+        data = new DBData(this, plugin);
     }
 
-    public void update(BasicDBObject data) {
-        new DBData(this).update(data);
+    public void update(BasicDBObject dataObj) {
+        data.update(dataObj);
     }
 
     public void update(String key, Object value) {
-        new DBData(this).set(key, value);
+        data.update(key, value);
+    }
+
+    public void append(String key, String value) {
+        data.push(key, value);
     }
 
     public void increment(String key) {
         increment(key, 1);
     }
 
-    public void increment(String key, int amount) {
-        new DBData(this).increment(key, amount);
+    void increment(String key, int amount) {
+        data.increment(key, amount);
+    }
+
+    private void remove(String key) {
+        data.remove(key);
+    }
+
+    public Boolean exists() {
+        return data.exists(name);
     }
 
     public void load() {
         if (name == null) return;
 
-        DBData dbData = new DBData(this);
-        uuid = dbData.uuid;
+        uuid = data.uuid;
 
-        rank = dbData.get("rank", rank);
-        String town = dbData.get("town", null);
+        rank = data.get("rank", rank);
+        String town = data.get("town", null);
         if (town != null) this.town = plugin.getTown(town);
     }
 
