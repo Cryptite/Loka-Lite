@@ -51,6 +51,10 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     private Status status;
     public String serverName = "build";
 
+    //Warps
+    public Location sanya, ak, da;
+    public Location sanyaPlate, akPlate, daPlate;
+
     public void onEnable() {
         pm = this.getServer().getPluginManager();
         server = getServer();
@@ -62,7 +66,15 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         pm.registerEvents(bungee, this);
 
         world = server.getWorld("world");
-        spawn = new Location(world, 415, 44, 660);
+        spawn = new Location(world, -6.5, 64, -54.5);
+
+        sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114);
+        ak = new Location(server.getWorld("world_blight"), -329.5, 117, -139.5);
+        da = new Location(server.getWorld("world3"), -9144, 101, 4402);
+
+        sanyaPlate = new Location(world, 7, 63, -27);
+        akPlate = new Location(world, -7, 63, -13);
+        daPlate = new Location(world, -21, 63, -27);
 
         chat = new ChatManager(this, bungee);
         getCommand("p").setExecutor(chat);
@@ -82,7 +94,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         //Config related stuff
         if (!Boolean.parseBoolean(config.get("settings.build", false))) {
             System.out.println("[SETTINGS] Interactions disabled");
-            pm.registerEvents(new PlayerInteractListener(), this);
+            pm.registerEvents(new PlayerInteractListener(this), this);
         } else {
             System.out.println("[SETTINGS] Interactions allowed");
         }
@@ -135,6 +147,9 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
             }
         } else if (commandLabel.equalsIgnoreCase("leave")) {
             bungee.sendPlayer(player);
+        } else if (commandLabel.equalsIgnoreCase("hub")) {
+            if (player != null && spawn != null)
+                player.teleport(spawn);
         } else if (commandLabel.equalsIgnoreCase("shutdown")) {
             for (Player pl : server.getOnlinePlayers()) {
                 pl.sendMessage(GRAY + "This server is restarting for maintenance.");

@@ -2,7 +2,7 @@ name: LokaLite
 main: com.cryptite.lite.LokaLite
 version: 1.0
 author: Cryptite
-depend:
+depend: [Multiverse-Core]
 commands:
   pvp:
      description: pvp?
@@ -10,6 +10,9 @@ commands:
   leave:
      description: Leave the match
      usage: /leave
+  hub:
+     description: Go to world hub
+     usage: /hub
   p:
      description: Public chat
      usage: /p
