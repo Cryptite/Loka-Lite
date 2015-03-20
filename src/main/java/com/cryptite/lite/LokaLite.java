@@ -65,7 +65,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         bungee = new Bungee(this);
         pm.registerEvents(bungee, this);
 
-        world = server.getWorld("world");
+        world = server.getWorld("spawn");
         spawn = new Location(world, -6.5, 64, -54.5);
 
         sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114);

@@ -9,6 +9,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.logging.Logger;
 
+import static java.lang.Boolean.parseBoolean;
+
 public class PlayerJoinListener implements Listener {
     private final Logger log = Logger.getLogger("Artifact-Join");
     private final LokaLite plugin;
@@ -25,7 +27,9 @@ public class PlayerJoinListener implements Listener {
         player.setExp(0);
         player.setLevel(0);
         player.setAllowFlight(true);
-        if (Boolean.parseBoolean(plugin.config.get("settings.adjustspawn", false))) player.teleport(plugin.spawn);
+
+        if (parseBoolean(plugin.config.get("settings.adjustspawn", false)) || !player.hasPlayedBefore())
+            player.teleport(plugin.spawn);
 
         //Check for chat spam grace period
         checkGracePeriod();
