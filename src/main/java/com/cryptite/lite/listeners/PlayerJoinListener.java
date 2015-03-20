@@ -26,7 +26,12 @@ public class PlayerJoinListener implements Listener {
         player.setFoodLevel(20);
         player.setExp(0);
         player.setLevel(0);
-        player.setAllowFlight(true);
+
+        if (!player.getWorld().equals(plugin.spawn)) {
+            player.setAllowFlight(true);
+            plugin.oldWorlds.sendWorldMessage(player, plugin.oldWorlds.getWorldNames(player.getWorld().getName().toLowerCase()));
+        }
+
 
         if (parseBoolean(plugin.config.get("settings.adjustspawn", false)) || !player.hasPlayedBefore())
             player.teleport(plugin.spawn);

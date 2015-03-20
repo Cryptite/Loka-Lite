@@ -94,6 +94,7 @@ public class Bungee implements PluginMessageListener, Listener {
 
     @Override
     public void onPluginMessageReceived(String s, Player player, byte[] bytes) {
+        System.out.println(s);
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
             String channelIn = in.readUTF();

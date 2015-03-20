@@ -1,7 +1,6 @@
 package com.cryptite.lite.db;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.bukkit.ChatColor.*;
@@ -9,7 +8,7 @@ import static org.bukkit.ChatColor.*;
 public class Town {
     public String owner, name, tag, alliance;
     private Map<String, Integer> memberLevels = new HashMap<>();
-    private Map<String, List<String>> ranks = new HashMap<>();
+    private Map<String, String> ranks = new HashMap<>();
 
     public Town(String name) {
         this.name = name;
@@ -19,8 +18,8 @@ public class Town {
         DBData dbData = new DBData(this);
 
         owner = dbData.get("owner", null);
-        ranks.putAll((Map) dbData.data.get("ranks"));
-        memberLevels.putAll((Map) dbData.data.get("members"));
+        ranks.putAll((Map) dbData.data.get("memberranks"));
+        memberLevels.putAll((Map) dbData.data.get("memberlevels"));
         tag = dbData.get("tag", name);
         alliance = dbData.get("alliance", null);
 

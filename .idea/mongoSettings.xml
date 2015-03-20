@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MongoConfiguration">
+    <option name="serverConfigurations">
+      <list>
+        <ServerConfiguration>
+          <option name="label" value="Loka" />
+          <option name="password" value="chappie154" />
+          <option name="serverUrls">
+            <list>
+              <option value="steel.minecraftarium.com:27017" />
+            </list>
+          </option>
+          <option name="userDatabase" value="loka" />
+          <option name="userDatabaseAsMySingleDatabase" value="true" />
+          <option name="username" value="minecraft" />
+        </ServerConfiguration>
+      </list>
+    </option>
+  </component>
+</project>

@@ -23,10 +23,10 @@ public class Status implements Listener {
         db = plugin.db;
 
         //Update on startup, that way we're properly at 0
-        updatePlayers();
+        updatePlayers(true);
     }
 
-    public void updatePlayers() {
+    public void updatePlayers(boolean startup) {
         if (updateID != null) updateID.cancel();
 
         updateID = plugin.scheduler.runTaskLater(plugin, () -> {
@@ -35,6 +35,9 @@ public class Status implements Listener {
             BasicDBObject data = new BasicDBObject("server", plugin.serverName)
                     .append("players",
                             plugin.server.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+
+            if (startup) data.append("available", true);
+
             if (coll.find(query).hasNext()) {
                 coll.update(query, new BasicDBObject().append("$set", data));
             } else {
@@ -43,13 +46,25 @@ public class Status implements Listener {
         }, 20 * 3);
     }
 
+    public void setReady(boolean ready) {
+        DBCollection coll = db.getCollection("servers");
+        BasicDBObject query = new BasicDBObject("server", plugin.serverName);
+        BasicDBObject data = new BasicDBObject("server", plugin.serverName)
+                .append("available", ready);
+        if (coll.find(query).hasNext()) {
+            coll.update(query, new BasicDBObject().append("$set", data));
+        } else {
+            coll.insert(data);
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        updatePlayers();
+        updatePlayers(false);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        updatePlayers();
+        updatePlayers(false);
     }
 }

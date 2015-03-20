@@ -3,6 +3,7 @@ package com.cryptite.lite;
 import com.cryptite.lite.bungee.Bungee;
 import com.cryptite.lite.db.Town;
 import com.cryptite.lite.listeners.*;
+import com.cryptite.lite.modules.OldWorlds;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static com.mongodb.MongoCredential.createMongoCRCredential;
+import static java.lang.Boolean.parseBoolean;
 import static org.bukkit.ChatColor.GRAY;
 
 public class LokaLite extends JavaPlugin implements CommandExecutor {
@@ -50,10 +52,12 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public ConfigFile config;
     private Status status;
     public String serverName = "build";
+    public String chatChannel = "---";
 
     //Warps
     public Location sanya, ak, da;
     public Location sanyaPlate, akPlate, daPlate;
+    public OldWorlds oldWorlds;
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();
@@ -68,7 +72,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         world = server.getWorld("spawn");
         spawn = new Location(world, -6.5, 64, -54.5);
 
-        sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114);
+        sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
         ak = new Location(server.getWorld("world_blight"), -329.5, 117, -139.5);
         da = new Location(server.getWorld("world3"), -9144, 101, 4402);
 
@@ -82,9 +86,13 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         getCommand("a").setExecutor(chat);
         getCommand("o").setExecutor(chat);
 
+        oldWorlds = new OldWorlds(this);
+        pm.registerEvents(oldWorlds, this);
+
         pm.registerEvents(new PlayerJoinListener(this), this);
         pm.registerEvents(new PlayerQuitListener(this), this);
         pm.registerEvents(new PlayerChatListener(this), this);
+        pm.registerEvents(new PlayerWorldListener(this), this);
 
         initDbPool();
 
@@ -92,14 +100,14 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         pm.registerEvents(status, this);
 
         //Config related stuff
-        if (!Boolean.parseBoolean(config.get("settings.build", false))) {
+        if (!parseBoolean(config.get("settings.build", false))) {
             System.out.println("[SETTINGS] Interactions disabled");
             pm.registerEvents(new PlayerInteractListener(this), this);
         } else {
             System.out.println("[SETTINGS] Interactions allowed");
         }
 
-        if (!Boolean.parseBoolean(config.get("settings.pvp", false))) {
+        if (!parseBoolean(config.get("settings.pvp", false))) {
             System.out.println("[SETTINGS] PvP disabled");
             pm.registerEvents(new PlayerDamageListener(), this);
         } else {
@@ -107,12 +115,19 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         }
 
         serverName = config.get("servername", "build");
+        chatChannel = config.get("chat", "---");
 
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
     public void onDisable() {
+        status.setReady(false);
+
+        for (Player p : server.getOnlinePlayers()) {
+            p.sendMessage(GRAY + "This server is restarting for maintenance.");
+            bungee.sendPlayer(p);
+        }
     }
 
     private void initDbPool() {

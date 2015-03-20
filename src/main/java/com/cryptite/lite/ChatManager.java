@@ -27,7 +27,7 @@ public class ChatManager implements CommandExecutor {
 
         if (commandLabel.equalsIgnoreCase("p")) {
             if (args.length < 1) {
-                player.sendMessage(GRAY + "Talk in public chat instead of team chat.");
+                player.sendMessage(GRAY + "Talk in global chat.");
                 player.sendMessage(AQUA + "Usage: " +
                         YELLOW + "/p <message>" + AQUA + ".");
                 return true;
@@ -102,6 +102,8 @@ public class ChatManager implements CommandExecutor {
                 break;
             case "admin":
                 adminChatMessage(p, message);
+            default:
+                globalMessage(p, message);
         }
 
         if (outgoing) {
@@ -117,6 +119,14 @@ public class ChatManager implements CommandExecutor {
             b.append(arg).append(" ");
         }
         return b.toString();
+    }
+
+    public void globalMessage(Account p, String message) {
+        String chatMessage = DARK_GRAY + "[" + plugin.chatChannel + "] " + GOLD + p.name + WHITE + ": " + message;
+        for (Player player : plugin.server.getOnlinePlayers()) {
+            if (player == null) continue;
+            player.sendMessage(chatMessage);
+        }
     }
 
     public void globalChatMessage(Account p, String message) {
@@ -200,6 +210,6 @@ public class ChatManager implements CommandExecutor {
     }
 
     private boolean isAdmin(Account p) {
-        return (p.rank.equals("Guardian") || p.rank.equals("Elder") || p.rank.equals("OldOne"));
+        return (p.rank.equalsIgnoreCase("Guardian") || p.rank.equalsIgnoreCase("Elder") || p.rank.equalsIgnoreCase("OldOne"));
     }
 }
