@@ -29,7 +29,8 @@ public class PlayerJoinListener implements Listener {
 
         if (!player.getWorld().equals(plugin.spawn)) {
             player.setAllowFlight(true);
-            plugin.oldWorlds.sendWorldMessage(player, plugin.oldWorlds.getWorldNames(player.getWorld().getName().toLowerCase()));
+            if (plugin.oldWorlds != null)
+                plugin.oldWorlds.sendWorldMessage(player, plugin.oldWorlds.getWorldNames(player.getWorld().getName().toLowerCase()));
         }
 
 

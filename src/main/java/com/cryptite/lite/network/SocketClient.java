@@ -4,14 +4,19 @@ import com.cryptite.lite.LokaLite;
 import com.cryptite.lite.db.Chat;
 import com.google.gson.Gson;
 
-public class SocketClient {
-    private final Client client = new Client("play.lokamc.com", 9876);
+public class SocketClient implements Runnable {
+    private Client client;
     private final LokaLite plugin;
     private boolean socketConnected = false;
 
     public SocketClient(LokaLite plugin) {
         this.plugin = plugin;
+        connect();
+        plugin.scheduler.scheduleSyncRepeatingTask(plugin, this, 20, 60);
+    }
 
+    private void connect() {
+        client = new Client("play.lokamc.com", 9876);
         client.getHandler().getConnected().addSocketConnectedEventListener(evt -> {
             System.out.println("Client - Connected to server!");
             socketConnected = true;
@@ -27,8 +32,10 @@ public class SocketClient {
     }
 
     private void parseMessage(String message) {
-        String channel = message.split("~")[1];
-        String msg = message.split("~")[2];
+        if (message.equals("pong")) return;
+
+        String channel = message.split("~")[0];
+        String msg = message.split("~")[1];
 
         switch (channel) {
             case "Chat":
@@ -46,9 +53,22 @@ public class SocketClient {
     }
 
     public void sendMessage(String destination, String data, String channel) {
-        if (!socketConnected)
-            client.Connect();
+        if (!socketConnected) {
+            connect();
+            return;
+        }
 
         client.SendMessage(destination + "~" + channel + "~" + data);
+    }
+
+    @Override
+    public void run() {
+        //If not connected, try to connect
+        if (!socketConnected) {
+            connect();
+            return;
+        }
+
+        client.SendMessage("ping");
     }
 }
