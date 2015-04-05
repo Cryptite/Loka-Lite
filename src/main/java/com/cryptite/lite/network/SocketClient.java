@@ -39,6 +39,9 @@ public class SocketClient implements Runnable {
 
         switch (channel) {
             case "Chat":
+                //No need to do anything about chat if we're empty
+                if (plugin.server.getOnlinePlayers().size() == 0) return;
+
                 parseChatMessage(msg);
                 break;
             default:
