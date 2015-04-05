@@ -1,7 +1,6 @@
 package com.cryptite.lite.bungee;
 
 import com.cryptite.lite.LokaLite;
-import com.cryptite.lite.db.Chat;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
@@ -94,16 +93,11 @@ public class Bungee implements PluginMessageListener, Listener {
 
     @Override
     public void onPluginMessageReceived(String s, Player player, byte[] bytes) {
-        System.out.println(s);
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
             String channelIn = in.readUTF();
             String msg = in.readUTF();
-            if (channelIn.equalsIgnoreCase("Chat")) {
-                parseChatMessage(msg);
-            } else if (channelIn.equals("PlayerCount")) {
-                sendPlayerList();
-            } else if (channelIn.equals("Achievement")) {
+            if (channelIn.equals("Achievement")) {
                 String playerName = msg.split("\\.")[0];
                 Achievement a = new Gson().fromJson(msg.split("\\.")[1], Achievement.class);
                 unlockAchievement(playerName, a);
@@ -113,22 +107,6 @@ public class Bungee implements PluginMessageListener, Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    void sendPlayerList() {
-        StringBuilder b = new StringBuilder();
-        for (Player p : plugin.server.getOnlinePlayers()) {
-            b.append(p.getName()).append(",");
-        }
-        sendMessage("loka", b.toString(), "PlayerCount");
-    }
-
-    void parseChatMessage(String msg) {
-        //No chat allowed during the grace period.
-        if (muteChatFromLoka) return;
-
-        Chat chat = new Gson().fromJson(msg, Chat.class);
-        plugin.chat.sendMessage(chat, false);
     }
 
     void unlockAchievement(String name, Achievement achievement) {

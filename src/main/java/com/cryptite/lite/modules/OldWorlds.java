@@ -26,6 +26,8 @@ public class OldWorlds implements Listener {
     }
 
     public void sendWorldMessage(Player p, String world, String number) {
+        if (world == null) return;
+
         plugin.scheduler.runTaskLater(plugin, () -> {
             new Title(GREEN + world, GRAY + "The " + number + " World").send(p);
             playCustomSound(p, "ZoneBell", .7f);
@@ -58,7 +60,7 @@ public class OldWorlds implements Listener {
                 sendWorldMessage(p, "Ak", "Second");
             }
         } else {
-            e.setCancelled(true);
+//            e.setCancelled(true);
         }
     }
 

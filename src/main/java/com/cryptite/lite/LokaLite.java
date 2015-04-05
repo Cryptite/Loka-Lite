@@ -4,6 +4,7 @@ import com.cryptite.lite.bungee.Bungee;
 import com.cryptite.lite.db.Town;
 import com.cryptite.lite.listeners.*;
 import com.cryptite.lite.modules.OldWorlds;
+import com.cryptite.lite.network.SocketClient;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -58,6 +59,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location sanya, ak, da;
     public Location sanyaPlate, akPlate, daPlate;
     public OldWorlds oldWorlds;
+    private SocketClient network;
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();
@@ -69,25 +71,16 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         bungee = new Bungee(this);
         pm.registerEvents(bungee, this);
 
+        network = new SocketClient(this);
+
         world = server.getWorld("spawn");
         spawn = new Location(world, -6.5, 64, -54.5);
 
-        sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
-        ak = new Location(server.getWorld("world_blight"), -329.5, 117, -139.5);
-        da = new Location(server.getWorld("world3"), -9144, 101, 4402);
-
-        sanyaPlate = new Location(world, 7, 63, -27);
-        akPlate = new Location(world, -7, 63, -13);
-        daPlate = new Location(world, -21, 63, -27);
-
-        chat = new ChatManager(this, bungee);
+        chat = new ChatManager(this, network);
         getCommand("p").setExecutor(chat);
         getCommand("t").setExecutor(chat);
         getCommand("a").setExecutor(chat);
         getCommand("o").setExecutor(chat);
-
-        oldWorlds = new OldWorlds(this);
-        pm.registerEvents(oldWorlds, this);
 
         pm.registerEvents(new PlayerJoinListener(this), this);
         pm.registerEvents(new PlayerQuitListener(this), this);
@@ -112,6 +105,22 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
             pm.registerEvents(new PlayerDamageListener(), this);
         } else {
             System.out.println("[SETTINGS] PvP allowed");
+        }
+
+        String module = config.get("module", "");
+        switch (module) {
+            case "oldworlds":
+                sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
+                ak = new Location(server.getWorld("world_blight"), -329.5, 117, -139.5);
+                da = new Location(server.getWorld("world3"), -9144, 101, 4402);
+
+                sanyaPlate = new Location(world, 7, 63, -27);
+                akPlate = new Location(world, -7, 63, -13);
+                daPlate = new Location(world, -21, 63, -27);
+
+                oldWorlds = new OldWorlds(this);
+                pm.registerEvents(oldWorlds, this);
+                break;
         }
 
         serverName = config.get("servername", "build");
