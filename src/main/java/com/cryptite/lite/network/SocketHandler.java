@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 public class SocketHandler extends Thread {
+    public String name;
 
     private Socket sock;
 
@@ -27,6 +28,8 @@ public class SocketHandler extends Thread {
     private String hostName;
 
     private int id;
+
+    private int readLoop;
 
     public SocketHandler() {
         this.disconnected = new SocketDisconnected();
@@ -98,6 +101,12 @@ public class SocketHandler extends Thread {
 
         }
 
+        readLoop++;
+        if (readLoop >= 7) {
+            System.out.println("[Network] TERMINATE READ LOOP!");
+            return;
+        }
+
         buffer = new byte[buffer.length - bytesReceived];
 
         try {
@@ -150,6 +159,7 @@ public class SocketHandler extends Thread {
                     bytesReceived = 0;
                     messageSize = -1;
                     buffer = new byte[4];
+                    readLoop = 0;
 
                     startReading(); //start reading again
 
@@ -184,7 +194,7 @@ public class SocketHandler extends Thread {
             out.flush();
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Disconnect();
         }
 
     }
@@ -192,9 +202,6 @@ public class SocketHandler extends Thread {
     public void Disconnect() {
 
         try {
-
-            System.out.println("Client disconnecting");
-
             sock.shutdownInput();
             sock.shutdownOutput();
 
@@ -203,7 +210,7 @@ public class SocketHandler extends Thread {
             disconnected.executeEvent(new SocketDisconnectedEvent(this, id));
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
     }

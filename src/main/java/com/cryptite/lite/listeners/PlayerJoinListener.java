@@ -9,8 +9,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.logging.Logger;
 
-import static java.lang.Boolean.parseBoolean;
-
 public class PlayerJoinListener implements Listener {
     private final Logger log = Logger.getLogger("Artifact-Join");
     private final LokaLite plugin;
@@ -28,17 +26,15 @@ public class PlayerJoinListener implements Listener {
         player.setLevel(0);
 
         if (!player.getWorld().equals(plugin.spawn)) {
-            player.setAllowFlight(true);
             if (plugin.oldWorlds != null)
                 plugin.oldWorlds.sendWorldMessage(player, plugin.oldWorlds.getWorldNames(player.getWorld().getName().toLowerCase()));
         }
 
+        player.setAllowFlight(!player.getWorld().equals(plugin.spawn));
 
-        if (parseBoolean(plugin.config.get("settings.adjustspawn", false)) || !player.hasPlayedBefore())
-            player.teleport(plugin.spawn);
-
-        //Check for chat spam grace period
-        checkGracePeriod();
+        if (player.getWorld().getName().equals("world")
+                || !player.hasPlayedBefore())
+            plugin.scheduler.runTaskLater(plugin, () -> player.teleport(plugin.spawn), 20);
 
         String joinMsg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("joinmessage", ""));
         event.setJoinMessage(joinMsg.replace("<player>", event.getPlayer().getName()));
@@ -47,23 +43,5 @@ public class PlayerJoinListener implements Listener {
         player.sendMessage(msg);
 
         plugin.getAccount(player.getName());
-    }
-
-    private void checkGracePeriod() {
-        //Grace period is when the the first player joins after the server was empty before bungee will spit out chat
-        //from other players. This is to prevent a huge spam of chat buildup when the server's been empty for awhile.
-        if (plugin.server.getOnlinePlayers().size() != 1) return;
-
-        //This is the first player on, set a grace period.
-        log.info("Activating chat grace period");
-        plugin.bungee.muteChatFromLoka = true;
-
-        //After a second, grace period can terminate.
-        plugin.getServer().getScheduler().runTaskLater(plugin,
-                () -> {
-                    log.info("Deactivating chat grace period");
-                    plugin.bungee.muteChatFromLoka = false;
-                }, 20
-        );
     }
 }

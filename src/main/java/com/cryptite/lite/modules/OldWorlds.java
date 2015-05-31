@@ -9,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import static com.cryptite.lite.utils.SoundUtil.playCustomSound;
@@ -48,20 +50,33 @@ public class OldWorlds implements Listener {
 
             if (plateLocation.equals(plugin.sanyaPlate)) {
                 p.teleport(plugin.sanya);
+                p.setAllowFlight(true);
 
                 sendWorldMessage(p, "Sanya", "First");
             } else if (plateLocation.equals(plugin.daPlate)) {
                 p.teleport(plugin.da);
+                p.setAllowFlight(true);
 
                 sendWorldMessage(p, "Da", "Third");
             } else if (plateLocation.equals(plugin.akPlate)) {
                 p.teleport(plugin.ak);
+                p.setAllowFlight(true);
 
                 sendWorldMessage(p, "Ak", "Second");
             }
         } else {
-//            e.setCancelled(true);
+            e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
+        e.setCancelled(true);
     }
 
     public String[] getWorldNames(String world) {

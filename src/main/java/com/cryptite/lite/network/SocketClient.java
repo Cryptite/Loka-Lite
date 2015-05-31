@@ -4,10 +4,13 @@ import com.cryptite.lite.LokaLite;
 import com.cryptite.lite.db.Chat;
 import com.google.gson.Gson;
 
+import static com.cryptite.lite.utils.TimeUtil.secondsSince;
+
 public class SocketClient implements Runnable {
     private Client client;
     private final LokaLite plugin;
     private boolean socketConnected = false;
+    private long lastPong;
 
     public SocketClient(LokaLite plugin) {
         this.plugin = plugin;
@@ -16,19 +19,30 @@ public class SocketClient implements Runnable {
     }
 
     private void connect() {
+        if (client != null) {
+            client.Disconnect();
+            client = null;
+            lastPong = 0;
+        }
+
         client = new Client("play.lokamc.com", 9876);
         client.getHandler().getConnected().addSocketConnectedEventListener(evt -> {
-            System.out.println("Client - Connected to server!");
+            System.out.println("[Network] Connected to server!");
             socketConnected = true;
+            client.SendMessage("~connect~" + plugin.serverName);
         });
 
         client.getHandler().getMessage().addMessageReceivedEventListener(evt -> parseMessage(evt.getMessage()));
 
         client.getHandler().getDisconnected().addSocketDisconnectedEventListener(evt -> {
-            System.out.println("Client - Disconnected");
+            System.out.println("[Network] Disconnected");
             socketConnected = false;
         });
         client.Connect();
+    }
+
+    public void disconnect() {
+        client.Disconnect();
     }
 
     private void parseMessage(String message) {
@@ -61,16 +75,20 @@ public class SocketClient implements Runnable {
             return;
         }
 
-        client.SendMessage(destination + "~" + channel + "~" + data);
+        plugin.scheduler.runTask(plugin, () -> client.SendMessage(destination + "~" + channel + "~" + data));
     }
 
     @Override
     public void run() {
         //If not connected, try to connect
-        if (!socketConnected) {
+        if (!socketConnected || (lastPong > 0 && secondsSince(lastPong) > 20)) {
+            socketConnected = false;
             connect();
             return;
         }
+
+        int secondsSinceLastPong = secondsSince(lastPong);
+        if (secondsSinceLastPong > 5) System.out.println("[Network] Last Pong: " + secondsSince(lastPong));
 
         client.SendMessage("ping");
     }

@@ -66,6 +66,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         server = getServer();
         scheduler = server.getScheduler();
         config = new ConfigFile(this, "config.yml");
+        serverName = config.get("servername", "build");
 
         //Bungee proxy stuff
         bungee = new Bungee(this);
@@ -111,7 +112,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         switch (module) {
             case "oldworlds":
                 sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
-                ak = new Location(server.getWorld("world_blight"), -329.5, 117, -139.5);
+                ak = new Location(server.getWorld("world_blight"), 329.5, 117, -139.5);
                 da = new Location(server.getWorld("world3"), -9144, 101, 4402);
 
                 sanyaPlate = new Location(world, 7, 63, -27);
@@ -123,7 +124,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
                 break;
         }
 
-        serverName = config.get("servername", "build");
         chatChannel = config.get("chat", "---");
 
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -131,6 +131,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     }
 
     public void onDisable() {
+        network.disconnect();
         status.setReady(false);
 
         for (Player p : server.getOnlinePlayers()) {
@@ -172,8 +173,10 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         } else if (commandLabel.equalsIgnoreCase("leave")) {
             bungee.sendPlayer(player);
         } else if (commandLabel.equalsIgnoreCase("hub")) {
-            if (player != null && spawn != null)
+            if (player != null && spawn != null) {
                 player.teleport(spawn);
+                player.setAllowFlight(false);
+            }
         } else if (commandLabel.equalsIgnoreCase("shutdown")) {
             for (Player pl : server.getOnlinePlayers()) {
                 pl.sendMessage(GRAY + "This server is restarting for maintenance.");

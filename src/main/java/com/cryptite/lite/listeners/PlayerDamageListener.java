@@ -14,6 +14,8 @@ public class PlayerDamageListener implements Listener {
 
     @EventHandler
     public void onEntityDamageEvent(final EntityDamageEvent e) {
-        e.setCancelled(true);
+        if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+            e.setCancelled(true);
+        }
     }
 }
