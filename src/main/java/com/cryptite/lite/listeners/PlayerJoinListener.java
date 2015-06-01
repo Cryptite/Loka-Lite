@@ -32,8 +32,9 @@ public class PlayerJoinListener implements Listener {
 
         player.setAllowFlight(!player.getWorld().equals(plugin.spawn));
 
-        if (player.getWorld().getName().equals("world")
-                || !player.hasPlayedBefore())
+        if (plugin.oldWorlds != null &&
+                (player.getWorld().getName().equals("world")
+                        || !player.hasPlayedBefore()))
             plugin.scheduler.runTaskLater(plugin, () -> player.teleport(plugin.spawn), 20);
 
         String joinMsg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("joinmessage", ""));

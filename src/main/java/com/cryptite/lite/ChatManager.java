@@ -92,7 +92,9 @@ public class ChatManager implements CommandExecutor {
         Account p = plugin.getAccount(player);
         switch (channel) {
             case "public":
-//                globalChatMessage(p, message);
+                if (plugin.oldWorlds == null) {
+                    globalChatMessage(p, message);
+                }
                 break;
             case "town":
                 townChatMessage(p, message);
