@@ -2,9 +2,10 @@ package com.cryptite.lite.network;
 
 import com.cryptite.lite.network.events.*;
 
-import java.io.InputStream;
+import java.io.DataInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 
 public class SocketHandler extends Thread {
@@ -12,12 +13,6 @@ public class SocketHandler extends Thread {
 
     private Socket sock;
 
-    private int bytesReceived = 0;
-    private int messageSize = -1;
-
-    private byte[] buffer = new byte[4];
-
-    private InputStream in;
     private OutputStream out;
 
     private SocketConnected connected;
@@ -28,8 +23,6 @@ public class SocketHandler extends Thread {
     private String hostName;
 
     private int id;
-
-    private int readLoop;
 
     public SocketHandler() {
         this.disconnected = new SocketDisconnected();
@@ -51,35 +44,24 @@ public class SocketHandler extends Thread {
     }
 
     private void HandleConnection() {
-
         if (sock == null) {
-
             Disconnect();
-
             return;
-
         }
 
         try {
-
             this.hostName = sock.getInetAddress().getCanonicalHostName();
-
-            in = sock.getInputStream();
             out = sock.getOutputStream();
 
-            if (in == null || out == null) {
-
+            if (out == null) {
                 Disconnect();
-
                 return;
-
             }
 
             ready.executeEvent(new SocketHandlerReadyEvent(this, this));
             connected.executeEvent(new SocketConnectedEvent(this, this, id));
 
             startReading();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,86 +74,32 @@ public class SocketHandler extends Thread {
     }
 
     private void startReading() {
-
         if (!sock.isConnected() || sock.isClosed()) {
-
             Disconnect();
-
-            return;
-
-        }
-
-        readLoop++;
-        if (readLoop >= 7) {
-            System.out.println("[Network] TERMINATE READ LOOP!");
             return;
         }
 
-        buffer = new byte[buffer.length - bytesReceived];
+        byte[] messageByte = new byte[1000];
+        String messageString;
 
         try {
+            DataInputStream inputStream = new DataInputStream(sock.getInputStream());
 
-            if (bytesReceived == -1) //end of stream
-            {
+            messageByte[0] = inputStream.readByte();
+            messageByte[1] = inputStream.readByte();
+            ByteBuffer byteBuffer = ByteBuffer.wrap(messageByte, 0, 2);
 
-                Disconnect();
-
-                return;
-
+            int bytesToRead = byteBuffer.getShort();
+            if (bytesToRead > 0) {
+                inputStream.readFully(messageByte, 0, bytesToRead);
+                messageString = new String(messageByte, 0, bytesToRead);
+                message.executeEvent(new MessageReceivedEvent(this, id, messageString));
             }
 
-            bytesReceived += in.read(buffer);
-
-            if (messageSize == -1) //still reading size of data
-            {
-
-                if (bytesReceived == 4) //received size information
-                {
-
-                    messageSize = ByteBuffer.wrap(buffer).getInt(0);
-
-                    if (messageSize < 0) {
-                        throw new Exception();
-                    }
-
-                    buffer = new byte[messageSize];
-
-                    bytesReceived = 0;
-
-                }
-
-                if (messageSize != 0) //need more data
-                {
-                    startReading();
-                }
-
-            } else {
-
-                if (bytesReceived == messageSize) //message body received
-                {
-
-                    StringBuffer sb = new StringBuffer();
-                    sb.append(new String(buffer));
-
-                    message.executeEvent(new MessageReceivedEvent(this, id, sb.toString()));
-
-                    //reset
-                    bytesReceived = 0;
-                    messageSize = -1;
-                    buffer = new byte[4];
-                    readLoop = 0;
-
-                    startReading(); //start reading again
-
-                } else
-                //need more data
-                {
-                    startReading();
-                }
-
-            }
-        } catch (Exception e) {
-
+            startReading();
+        } catch (SocketException e) {
+            Disconnect();
+        } catch (Exception ignored) {
         }
     }
 
@@ -181,7 +109,6 @@ public class SocketHandler extends Thread {
             return;
 
         byte[] sizeinfo = new byte[4];
-
         byte[] data = message.getBytes();
 
         ByteBuffer bb = ByteBuffer.allocate(sizeinfo.length);
