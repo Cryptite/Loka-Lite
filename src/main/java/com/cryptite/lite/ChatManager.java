@@ -131,6 +131,7 @@ public class ChatManager implements CommandExecutor {
             if (player == null) continue;
             player.sendMessage(chatMessage);
         }
+        System.out.println(chatMessage);
     }
 
     public void globalChatMessage(Account p, String message) {

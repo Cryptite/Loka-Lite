@@ -30,7 +30,7 @@ public class Client {
             handler.start();
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
         }
 
     }
