@@ -12,7 +12,6 @@
             </list>
           </option>
           <option name="userDatabase" value="loka" />
-          <option name="userDatabaseAsMySingleDatabase" value="true" />
           <option name="username" value="minecraft" />
         </ServerConfiguration>
       </list>
