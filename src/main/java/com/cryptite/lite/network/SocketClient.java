@@ -31,7 +31,7 @@ public class SocketClient implements Runnable {
             lastPong = 0;
         }
 
-        client = new Client("pvp.lokamc.com", 9876);
+        client = new Client(plugin.config.get("networkserver", "pvp.lokamc.com"), 9876);
         client.getHandler().getConnected().addSocketConnectedEventListener(evt -> {
             System.out.println("[Network] Connected to server!");
             socketConnected = true;
