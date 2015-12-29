@@ -2,7 +2,13 @@ package com.cryptite.lite.network;
 
 import com.cryptite.lite.LokaLite;
 import com.cryptite.lite.db.Chat;
+import com.cryptite.lite.utils.LocationUtils;
 import com.google.gson.Gson;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.cryptite.lite.utils.TimeUtil.secondsSince;
 
@@ -58,6 +64,17 @@ public class SocketClient implements Runnable {
 
                 parseChatMessage(msg);
                 break;
+            case "regen":
+                List<String> locs = new Gson().fromJson(msg, List.class);
+                List<String> blocks = new ArrayList<>();
+                System.out.println("[Network] got a list of shit! " + locs);
+                for (String loc : locs) {
+                    Location l = LocationUtils.parseCoord(plugin, loc);
+                    Block b = l.getBlock();
+                    blocks.add(loc + "," + b.getTypeId() + "," + b.getData());
+                }
+                System.out.println("Sending " + blocks.size() + " back to loka.");
+                sendMessage("loka", new Gson().toJson(blocks), "regenblocks");
             default:
                 System.out.println("[Network] Received unknown data on " + channel + ": " + msg);
                 break;
