@@ -5,6 +5,8 @@ import com.cryptite.lite.db.Chat;
 import com.cryptite.lite.utils.LocationUtils;
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
+import com.mongodb.BulkWriteOperation;
+import com.mongodb.BulkWriteResult;
 import com.mongodb.DBCollection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -88,6 +90,8 @@ public class SocketClient implements Runnable {
 
             DBCollection collection = plugin.db.getCollection("regen");
 
+            BulkWriteOperation update = collection.initializeUnorderedBulkOperation();
+
             while (blocks.size() > 0) {
                 List<String> blockUpdate = new ArrayList<>();
                 for (String block : new ArrayList<>(blocks)) {
@@ -95,10 +99,11 @@ public class SocketClient implements Runnable {
                     if (blockUpdate.size() > 500) break;
                 }
                 BasicDBObject b = new BasicDBObject("blocks", blockUpdate);
-                collection.insert(b);
+                update.insert(b);
                 System.out.println("Pushed " + blockUpdate.size() + " blocks to db");
                 blocks.removeAll(blockUpdate);
             }
+            BulkWriteResult result = update.execute();
             sendMessage("loka", "done", "regenblocks");
         });
     }
