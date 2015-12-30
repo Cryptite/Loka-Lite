@@ -96,7 +96,7 @@ public class SocketClient implements Runnable {
                 List<String> blockUpdate = new ArrayList<>();
                 for (String block : new ArrayList<>(blocks)) {
                     blockUpdate.add(block);
-                    if (blockUpdate.size() > 500) break;
+                    if (blockUpdate.size() > 1000) break;
                 }
                 BasicDBObject b = new BasicDBObject("blocks", blockUpdate);
                 update.insert(b);
