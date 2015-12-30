@@ -4,12 +4,16 @@ import com.cryptite.lite.LokaLite;
 import com.cryptite.lite.db.Chat;
 import com.cryptite.lite.utils.LocationUtils;
 import com.google.gson.Gson;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cryptite.lite.utils.LocationUtils.coordsToStringBasic;
+import static com.cryptite.lite.utils.LocationUtils.parseCoord;
 import static com.cryptite.lite.utils.TimeUtil.secondsSince;
 
 public class SocketClient implements Runnable {
@@ -65,20 +69,38 @@ public class SocketClient implements Runnable {
                 parseChatMessage(msg);
                 break;
             case "regen":
-                List<String> locs = new Gson().fromJson(msg, List.class);
-                List<String> blocks = new ArrayList<>();
-                System.out.println("[Network] got a list of shit! " + locs);
-                for (String loc : locs) {
-                    Location l = LocationUtils.parseCoord(plugin, loc);
-                    Block b = l.getBlock();
-                    blocks.add(loc + "," + b.getTypeId() + "," + b.getData());
-                }
-                System.out.println("Sending " + blocks.size() + " back to loka.");
-                sendMessage("loka", new Gson().toJson(blocks), "regenblocks");
+                Location l1 = parseCoord(plugin, msg.split("-")[0]);
+                Location l2 = parseCoord(plugin, msg.split("-")[1]);
+                getRegenBlocks(l1, l2);
+                break;
             default:
                 System.out.println("[Network] Received unknown data on " + channel + ": " + msg);
                 break;
         }
+    }
+
+    private void getRegenBlocks(Location l1, Location l2) {
+        plugin.scheduler.runTask(plugin, () -> {
+            List<String> blocks = new ArrayList<>();
+            for (Block b : LocationUtils.getBlocksFromRegion(l1, l2)) {
+                blocks.add(coordsToStringBasic(b.getLocation()) + "," + b.getTypeId() + "," + b.getData());
+            }
+
+            DBCollection collection = plugin.db.getCollection("regen");
+
+            while (blocks.size() > 0) {
+                List<String> blockUpdate = new ArrayList<>();
+                for (String block : new ArrayList<>(blocks)) {
+                    blockUpdate.add(block);
+                    if (blockUpdate.size() > 500) break;
+                }
+                BasicDBObject b = new BasicDBObject("blocks", blockUpdate);
+                collection.insert(b);
+                System.out.println("Pushed " + blockUpdate.size() + " blocks to db");
+                blocks.removeAll(blockUpdate);
+            }
+            sendMessage("loka", "done", "regenblocks");
+        });
     }
 
     void parseChatMessage(String msg) {
