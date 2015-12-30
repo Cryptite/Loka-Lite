@@ -5,14 +5,13 @@ import com.cryptite.lite.db.Chat;
 import com.cryptite.lite.utils.LocationUtils;
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
-import com.mongodb.BulkWriteOperation;
-import com.mongodb.BulkWriteResult;
 import com.mongodb.DBCollection;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.cryptite.lite.utils.LocationUtils.coordsToStringBasic;
 import static com.cryptite.lite.utils.LocationUtils.parseCoord;
@@ -83,28 +82,33 @@ public class SocketClient implements Runnable {
 
     private void getRegenBlocks(Location l1, Location l2) {
         plugin.scheduler.runTask(plugin, () -> {
+            System.out.println("[Regeneration] Received regen call from Loka");
             List<String> blocks = new ArrayList<>();
             for (Block b : LocationUtils.getBlocksFromRegion(l1, l2)) {
                 blocks.add(coordsToStringBasic(b.getLocation()) + "," + b.getTypeId() + "," + b.getData());
             }
+            System.out.println("[Regeneration] Loaded " + blocks.size() + " worth of data...");
 
-            DBCollection collection = plugin.db.getCollection("regen");
+            plugin.scheduler.runTaskAsynchronously(plugin, () -> {
+                DBCollection collection = plugin.db.getCollection("regen");
 
-            BulkWriteOperation update = collection.initializeUnorderedBulkOperation();
-
-            while (blocks.size() > 0) {
-                List<String> blockUpdate = new ArrayList<>();
-                for (String block : new ArrayList<>(blocks)) {
-                    blockUpdate.add(block);
-                    if (blockUpdate.size() > 1000) break;
+                long pushed = 0;
+                while (blocks.size() > 0) {
+                    List<String> blockUpdate = new ArrayList<>();
+                    for (String block : new ArrayList<>(blocks)) {
+                        blockUpdate.add(block);
+                        if (blockUpdate.size() > 1000) break;
+                    }
+                    String id = UUID.randomUUID().toString();
+                    collection.insert(new BasicDBObject("blocks_" + id, blockUpdate));
+                    int percent = (int) (((float) (pushed += blockUpdate.size()) / (float) blocks.size()) * 100);
+                    System.out.println("[Regeneration] Pushed " + percent + "% db (" + blocks.size() + " left)");
+                    blocks.removeAll(blockUpdate);
+                    sendMessage("loka", "blocks_" + id, "regenblocks");
                 }
-                BasicDBObject b = new BasicDBObject("blocks", blockUpdate);
-                update.insert(b);
-                System.out.println("Pushed " + blockUpdate.size() + " blocks to db");
-                blocks.removeAll(blockUpdate);
-            }
-            BulkWriteResult result = update.execute();
-            sendMessage("loka", "done", "regenblocks");
+
+                sendMessage("loka", "done", "regenblocks");
+            });
         });
     }
 
