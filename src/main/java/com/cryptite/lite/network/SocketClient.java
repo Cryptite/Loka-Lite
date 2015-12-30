@@ -89,22 +89,26 @@ public class SocketClient implements Runnable {
             }
             System.out.println("[Regeneration] Loaded " + blocks.size() + " worth of data...");
 
+            float totalBlocks = blocks.size();
             plugin.scheduler.runTaskAsynchronously(plugin, () -> {
                 DBCollection collection = plugin.db.getCollection("regen");
 
-                long pushed = 0;
+                final long[] pushed = {0};
                 while (blocks.size() > 0) {
                     List<String> blockUpdate = new ArrayList<>();
                     for (String block : new ArrayList<>(blocks)) {
                         blockUpdate.add(block);
-                        if (blockUpdate.size() > 1000) break;
+                        if (blockUpdate.size() > 2499) break;
                     }
                     String id = UUID.randomUUID().toString();
-                    collection.insert(new BasicDBObject("blocks_" + id, blockUpdate));
-                    int percent = (int) (((float) (pushed += blockUpdate.size()) / (float) blocks.size()) * 100);
-                    System.out.println("[Regeneration] Pushed " + percent + "% db (" + blocks.size() + " left)");
+                    plugin.scheduler.runTaskLaterAsynchronously(plugin, () -> {
+                        collection.insert(new BasicDBObject("blocks_" + id, blockUpdate));
+                        pushed[0] += blockUpdate.size();
+                        int percent = (int) (((float) pushed[0] / totalBlocks) * 100);
+                        System.out.println("[Regeneration] Pushed " + percent + "% db (" + blocks.size() + " left)");
+                        sendMessage("loka", "blocks_" + percent + "_" + blocks.size() + "_" + id, "regenblocks");
+                    }, 40);
                     blocks.removeAll(blockUpdate);
-                    sendMessage("loka", "blocks_" + id, "regenblocks");
                 }
 
                 sendMessage("loka", "done", "regenblocks");
