@@ -1,7 +1,7 @@
 package com.cryptite.lite.modules;
 
+import com.connorlinfoot.bountifulapi.BountifulAPI;
 import com.cryptite.lite.LokaLite;
-import com.cryptite.lite.utils.Title;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class OldWorlds implements Listener {
         if (world == null) return;
 
         plugin.scheduler.runTaskLater(plugin, () -> {
-            new Title(GREEN + world, GRAY + "The " + number + " World").send(p);
+            BountifulAPI.sendTitle(p, 1, 4, 1, GREEN + world, GRAY + "The " + number + " World");
             playCustomSound(p, "ZoneBell", .7f);
             p.sendMessage(GRAY + "Welcome to " + GREEN + world + GRAY + ", the " + number
                     + " world. You may " + GREEN + "fly" + GRAY + " here.");

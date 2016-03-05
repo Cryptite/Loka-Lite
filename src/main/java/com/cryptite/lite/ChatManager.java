@@ -1,8 +1,6 @@
 package com.cryptite.lite;
 
 import com.cryptite.lite.db.Chat;
-import com.cryptite.lite.network.SocketClient;
-import com.google.gson.Gson;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,11 +11,9 @@ import static org.bukkit.ChatColor.*;
 
 public class ChatManager implements CommandExecutor {
     private LokaLite plugin;
-    private SocketClient network;
 
-    public ChatManager(LokaLite plugin, SocketClient network) {
+    public ChatManager(LokaLite plugin) {
         this.plugin = plugin;
-        this.network = network;
     }
 
     @Override
@@ -113,7 +109,7 @@ public class ChatManager implements CommandExecutor {
         if (outgoing) {
             //Send to network
             Chat chat = new Chat(player, channel, message);
-            network.sendMessage("ALL", new Gson().toJson(chat), "Chat");
+//            network.sendMessage("ALL", new Gson().toJson(chat), "Chat");
         }
     }
 

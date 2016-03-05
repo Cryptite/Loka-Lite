@@ -114,7 +114,7 @@ public class Bungee implements PluginMessageListener, Listener {
 
         if (p != null) {
             //Play level up sound
-            p.getWorld().playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
+            p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
         }
 
         //Announce achievement

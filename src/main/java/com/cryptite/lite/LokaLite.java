@@ -4,7 +4,6 @@ import com.cryptite.lite.bungee.Bungee;
 import com.cryptite.lite.db.Town;
 import com.cryptite.lite.listeners.*;
 import com.cryptite.lite.modules.OldWorlds;
-import com.cryptite.lite.network.SocketClient;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -21,7 +20,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -59,7 +57,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location sanya, ak, da;
     public Location sanyaPlate, akPlate, daPlate;
     public OldWorlds oldWorlds;
-    private SocketClient network;
+    private MQ mq;
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();
@@ -68,16 +66,16 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         config = new ConfigFile(this, "config.yml");
         serverName = config.get("servername", "build");
 
+        mq = new MQ(this, config.get("mqServer", "pvp.lokamc.com"));
+
         //Bungee proxy stuff
         bungee = new Bungee(this);
         pm.registerEvents(bungee, this);
 
-        network = new SocketClient(this);
-
         world = server.getWorld("spawn");
         spawn = new Location(world, -6.5, 64, -54.5);
 
-        chat = new ChatManager(this, network);
+        chat = new ChatManager(this);
         getCommand("p").setExecutor(chat);
         getCommand("t").setExecutor(chat);
         getCommand("a").setExecutor(chat);
@@ -131,7 +129,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     }
 
     public void onDisable() {
-        network.disconnect();
         status.setReady(false);
 
         for (Player p : server.getOnlinePlayers()) {
@@ -141,19 +138,15 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     }
 
     private void initDbPool() {
-        try {
-            MongoClient mongoClient;
-            String username = config.get("db.user", "");
-            String pass = config.get("db.password", "");
-            MongoCredential credential = createMongoCRCredential(username, "loka", pass.toCharArray());
+        MongoClient mongoClient;
+        String username = config.get("db.user", "");
+        String pass = config.get("db.password", "");
+        MongoCredential credential = createMongoCRCredential(username, "loka", pass.toCharArray());
 
-            System.out.println("[DB] Connecting to steel.minecraftarium.com");
-            mongoClient = new MongoClient(new ServerAddress("steel.minecraftarium.com"), Arrays.asList(credential));
+        System.out.println("[DB] Connecting to steel.minecraftarium.com");
+        mongoClient = new MongoClient(new ServerAddress("steel.minecraftarium.com"), Arrays.asList(credential));
 
-            db = mongoClient.getDB("loka");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        db = mongoClient.getDB("loka");
     }
 
     @Override
