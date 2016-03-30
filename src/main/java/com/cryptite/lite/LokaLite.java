@@ -129,6 +129,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     }
 
     public void onDisable() {
+        mq.close();
         status.setReady(false);
 
         for (Player p : server.getOnlinePlayers()) {

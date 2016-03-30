@@ -5,22 +5,24 @@ import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import static com.cryptite.lite.utils.TimeUtil.secondsSince;
-
 public class MQ implements ShutdownListener {
-    public static final String HEARTBEAT_TOPIC = "heartbeat";
+    private static final String HEARTBEAT_TOPIC = "heartbeat";
+    private static final Duration FIVE_SECONDS = Duration.ofSeconds(5);
     private final LokaLite plugin;
 
-    public static class Heartbeat {
+    private static class Heartbeat {
         public String server;
+        public boolean online = true;
 
-        public Heartbeat(String server) {
+        Heartbeat(String server) {
             this.server = server;
         }
     }
@@ -30,19 +32,20 @@ public class MQ implements ShutdownListener {
     private Connection connection;
     private Channel channel;
     private Heartbeat heartbeat;
-    private Map<String, Long> lastHeartbeats = new HashMap<>();
+    private Map<String, LocalDateTime> lastHeartbeats = new HashMap<>();
     private List<Runnable> subscriptions = new ArrayList<>();
     private boolean closed;
 
     public MQ(LokaLite plugin, String host) {
         this.plugin = plugin;
         this.host = host;
-
-        connect();
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::heartbeat, 100, 40);
     }
 
-    public void heartbeat() {
+    public void start() {
+        plugin.scheduler.runTaskTimerAsynchronously(plugin, this::heartbeat, 100, 40);
+    }
+
+    private void heartbeat() {
         if (!isOffline()) {
             publish(HEARTBEAT_TOPIC, heartbeat);
         } else {
@@ -54,6 +57,7 @@ public class MQ implements ShutdownListener {
         if (isOffline()) {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost(host);
+            factory.setRequestedHeartbeat(6);
 
             try {
                 connection = factory.newConnection();
@@ -84,16 +88,12 @@ public class MQ implements ShutdownListener {
         if (!lastHeartbeats.containsKey(h.server)) {
             System.out.println("[Network] New heartbeat from: " + h.server);
         }
-        lastHeartbeats.put(h.server, System.currentTimeMillis());
+        lastHeartbeats.put(h.server, LocalDateTime.now());
     }
 
     public boolean isOnline(String server) {
-        return secondsSinceLastHeartbeat(server) < 5;
-    }
-
-    private int secondsSinceLastHeartbeat(String server) {
-        long lastBeat = lastHeartbeats.getOrDefault(server, 0L);
-        return lastBeat > 0 ? secondsSince(lastBeat) : Integer.MAX_VALUE;
+        LocalDateTime dt = lastHeartbeats.get(server);
+        return dt != null && Duration.between(dt, LocalDateTime.now()).compareTo(FIVE_SECONDS) <= 0;
     }
 
     private String declareQueue(String topic) throws IOException {
@@ -142,6 +142,7 @@ public class MQ implements ShutdownListener {
 
     public synchronized <T> void subscribe(String topic, Class<T> type, java.util.function.Consumer<T> callback) {
         Runnable r = () -> {
+            System.out.println("[Network] " + topic + " running");
             try {
                 String queue = declareQueue(topic);
 
@@ -160,11 +161,17 @@ public class MQ implements ShutdownListener {
                 e.printStackTrace();
             }
         };
-        subscriptions.add(r);
+        if (isOffline()) {
+            subscriptions.add(r);
+        } else {
+            r.run();
+        }
     }
 
     public void close() {
         try {
+            heartbeat.online = false;
+            publish(HEARTBEAT_TOPIC, heartbeat);
             closed = true;
             if (channel.isOpen()) channel.close();
             if (connection.isOpen()) connection.close();

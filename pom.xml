@@ -52,24 +52,27 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.9-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>3.6.5</version>
+            <version>3.7.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>mkremins</groupId>
             <artifactId>fanciful</artifactId>
             <version>0.3.3-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.0.4</version>
+            <version>3.2.2</version>
         </dependency>
         <dependency>
             <groupId>com.rabbitmq</groupId>
@@ -79,21 +82,22 @@
     </dependencies>
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>shadowvolt-repo</id>
-            <url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
-        </repository>
-        <repository>
-            <id>fanciful-mvn-repo</id>
-            <url>https://raw.github.com/mkremins/fanciful/mvn-repo/</url>
-        </repository>
-        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
+        <!-- ProtocolLib -->
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/content/groups/public/</url>
+        </repository>
+
+        <!--  Fanciful  -->
+        <repository>
+            <id>stealthyone-repo</id>
+            <url>http://repo.stealthyone.com/content/groups/public</url>
+        </repository>
+
+
         <repository>
             <id>repository.jboss.org-public</id>
             <name>JBoss repository</name>
