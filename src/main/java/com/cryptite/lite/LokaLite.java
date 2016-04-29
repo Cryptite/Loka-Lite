@@ -49,7 +49,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public ChatManager chat;
     public DB db;
     public ConfigFile config;
-    private Status status;
+    Status status;
     public String serverName = "build";
     public String chatChannel = "---";
 
@@ -57,7 +57,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location sanya, ak, da;
     public Location sanyaPlate, akPlate, daPlate;
     public OldWorlds oldWorlds;
-    private MQ mq;
+    MQ mq;
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();

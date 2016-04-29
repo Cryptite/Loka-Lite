@@ -19,8 +19,9 @@ public class MQ implements ShutdownListener {
     private final LokaLite plugin;
 
     private static class Heartbeat {
-        public String server;
-        public boolean online = true;
+        String server;
+        public boolean playerList = false;
+        boolean online = true;
 
         Heartbeat(String server) {
             this.server = server;
@@ -88,6 +89,7 @@ public class MQ implements ShutdownListener {
         if (!lastHeartbeats.containsKey(h.server)) {
             System.out.println("[Network] New heartbeat from: " + h.server);
         }
+        if (h.playerList) plugin.status.updatePlayers();
         lastHeartbeats.put(h.server, LocalDateTime.now());
     }
 
