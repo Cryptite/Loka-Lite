@@ -4,15 +4,22 @@ import com.cryptite.lite.LokaLite;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
+import org.bukkit.block.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class LocationUtils {
+    public static Set<Material> INVENTORY_MATERIALS = new HashSet<>(Arrays.asList(Material.CHEST,
+            Material.TRAPPED_CHEST,
+            Material.DROPPER,
+            Material.HOPPER,
+            Material.FURNACE,
+            Material.DISPENSER));
+
     public static void playCustomSound(Player p, String sound) {
         playCustomSound(p, sound, 1f);
     }
@@ -111,5 +118,78 @@ public class LocationUtils {
         }
 
         return blocks;
+    }
+
+    public static List<Block> getAdjacentBlocks(Block b, boolean searchUpDown) {
+        List<Block> blocks = new ArrayList<>(Arrays.asList(b,
+                b.getRelative(BlockFace.EAST),
+                b.getRelative(BlockFace.NORTH),
+                b.getRelative(BlockFace.SOUTH),
+                b.getRelative(BlockFace.WEST)));
+        if (searchUpDown) {
+            blocks.add(b.getRelative(BlockFace.UP));
+            blocks.add(b.getRelative(BlockFace.DOWN));
+        }
+        return blocks;
+    }
+
+    public static Inventory getChestInventory(Location chestLocation) {
+        return getChestInventory(chestLocation.getBlock());
+    }
+
+    private static Inventory getChestInventory(Block block) {
+        BlockState state = block.getState();
+        if (state instanceof Chest) {
+            return ((Chest) state).getInventory();
+        } else if (state instanceof Furnace) {
+            return ((Furnace) state).getInventory();
+        } else if (state instanceof Dropper) {
+            return ((Dropper) state).getInventory();
+        } else if (state instanceof Hopper) {
+            return ((Hopper) state).getInventory();
+        } else if (state instanceof Dispenser) {
+            return ((Dispenser) state).getInventory();
+        }
+        Chest chest = (Chest) block.getState();
+        return chest.getInventory();
+    }
+
+    public static Map<Location, Map<String, Integer>> scanChests(Location p1, Location p2) {
+        System.out.println("--- Scanning  for chests ---");
+        List<Block> blocks = getBlocksFromRegion(p1, p2);
+        System.out.println("--- Looking through " + blocks.size() + " blocks");
+        Set<Block> chests = new HashSet<>();
+        for (Block b : blocks) {
+            if (!INVENTORY_MATERIALS.contains(b.getType())) continue;
+
+            boolean doubleChest = false;
+            if (b.getType().equals(Material.CHEST) || b.getType().equals(Material.TRAPPED_CHEST)) {
+                for (Block adjacent : getAdjacentBlocks(b, false)) {
+                    if (adjacent.getType().equals(b.getType()) && chests.contains(adjacent)) {
+                        doubleChest = true;
+                        break;
+                    }
+                }
+            }
+            if (!doubleChest) {
+                chests.add(b);
+            }
+        }
+
+        Map<Location, Map<String, Integer>> chestMap = new HashMap<>();
+        for (Block b : chests) {
+            Map<String, Integer> items = new HashMap<>();
+            for (ItemStack item : getChestInventory(b.getLocation())) {
+                if (item == null || item.getType().equals(Material.AIR)) continue;
+                String itemVal = item.getType().toString() + ":"
+                        + (item.getType().getMaxDurability() == 0 ? item.getData().getData() : 0);
+
+                items.put(itemVal, items.getOrDefault(itemVal, 0) + item.getAmount());
+            }
+            if (!items.isEmpty()) {
+                chestMap.put(b.getLocation(), items);
+            }
+        }
+        return chestMap;
     }
 }
