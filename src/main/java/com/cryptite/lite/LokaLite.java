@@ -128,6 +128,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         }
 
         chatChannel = config.get("chat", "---");
+        mq.start();
 
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");

@@ -12,6 +12,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="craftbukkit-1.9" level="project" />
     <orderEntry type="library" name="BountifulAPI-1.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:12.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.3" level="project" />
@@ -35,5 +38,6 @@
     <orderEntry type="library" name="Maven: mkremins:fanciful:0.3.3-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:mongo-java-driver:3.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:3.6.0" level="project" />
+    <orderEntry type="library" name="craftbukkit-1.9.4" level="project" />
   </component>
 </module>

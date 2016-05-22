@@ -187,6 +187,7 @@ public class LocationUtils {
                 items.put(itemVal, items.getOrDefault(itemVal, 0) + item.getAmount());
             }
             if (!items.isEmpty()) {
+                System.out.println(items.size() + " items in chest at: " + coordsToString(b.getLocation()));
                 chestMap.put(b.getLocation(), items);
             }
         }
