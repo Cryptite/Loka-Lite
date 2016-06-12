@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="BountifulAPI-1.6.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/BountifulAPI-1.6.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
