@@ -11,9 +11,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Status implements Listener {
@@ -21,6 +20,16 @@ public class Status implements Listener {
     private LokaLite plugin;
     private DB db;
     private BukkitTask updateID;
+
+    private static class ServerList {
+        private final String server;
+        private final List<String> players;
+
+        public ServerList(String server, List<String> players) {
+            this.server = server;
+            this.players = players;
+        }
+    }
 
     public Status(LokaLite plugin) {
         this.plugin = plugin;
@@ -30,16 +39,15 @@ public class Status implements Listener {
         updatePlayers();
     }
 
-    public void updatePlayers() {
+    void updatePlayers() {
         if (updateID != null) updateID.cancel();
 
-        Map<String, Set<String>> players = new HashMap<>();
-        players.put(plugin.serverName, plugin.server.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
-        updateID = plugin.scheduler.runTaskLaterAsynchronously(plugin, () -> plugin.mq.publish(PLAYER_LIST_TOPIC,
-                players), 20 * 3);
+        List<String> players = new ArrayList<>(plugin.server.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
+        updateID = plugin.scheduler.runTaskLaterAsynchronously(plugin,
+                () -> plugin.mq.publish(PLAYER_LIST_TOPIC, new ServerList(plugin.serverName, players)), 20 * 3);
     }
 
-    public void setReady(boolean ready) {
+    void setReady(boolean ready) {
         DBCollection coll = db.getCollection("servers");
         BasicDBObject query = new BasicDBObject("server", plugin.serverName);
         BasicDBObject data = new BasicDBObject("server", plugin.serverName)
