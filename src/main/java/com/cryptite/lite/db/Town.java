@@ -18,8 +18,12 @@ public class Town {
         DBData dbData = new DBData(this);
 
         owner = dbData.get("owner", null);
-        ranks.putAll((Map) dbData.data.get("memberranks"));
-        memberLevels.putAll((Map) dbData.data.get("memberlevels"));
+        try {
+            ranks.putAll((Map) dbData.data.get("memberranks"));
+            memberLevels.putAll((Map) dbData.data.get("memberlevels"));
+        } catch (Exception e) {
+
+        }
         tag = dbData.get("tag", name);
         alliance = dbData.get("alliance", null);
 
