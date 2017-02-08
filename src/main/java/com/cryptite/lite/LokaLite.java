@@ -59,8 +59,8 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public String chatChannel = "---";
 
     //Warps
-    public Location sanya, ak, da;
-    public Location sanyaPlate, akPlate, daPlate;
+    public Location sanya, ak, da, taan;
+    public Location sanyaPlate, akPlate, daPlate, taanPlate;
     public OldWorlds oldWorlds;
     MQ mq;
 
@@ -115,8 +115,9 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         switch (module) {
             case "oldworlds":
                 sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
-                ak = new Location(server.getWorld("world_blight"), 329.5, 117, -139.5);
+                ak = new Location(server.getWorld("world_loka"), 329.5, 117, -139.5);
                 da = new Location(server.getWorld("world3"), -9144, 101, 4402);
+                taan = new Location(server.getWorld("fourthworld"), -74.5, 111, -74.5);
 
                 sanyaPlate = new Location(world, 7, 63, -27);
                 akPlate = new Location(world, -7, 63, -13);
@@ -149,10 +150,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         String username = config.get("db.user", "");
         String pass = config.get("db.password", "");
         MongoCredential credential = createMongoCRCredential(username, "loka", pass.toCharArray());
-
-        System.out.println("[DB] Connecting to steel.minecraftarium.com");
-        mongoClient = new MongoClient(new ServerAddress("steel.minecraftarium.com"), Arrays.asList(credential));
-
+        mongoClient = new MongoClient(new ServerAddress("play.lokamc.com"), Arrays.asList(credential));
         db = mongoClient.getDB("loka");
     }
 

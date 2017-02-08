@@ -1,6 +1,5 @@
 package com.cryptite.lite.modules;
 
-import com.connorlinfoot.bountifulapi.BountifulAPI;
 import com.cryptite.lite.LokaLite;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +12,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import static com.connorlinfoot.bountifulapi.BountifulAPI.sendTitle;
 import static com.cryptite.lite.utils.SoundUtil.playCustomSound;
 import static org.bukkit.ChatColor.*;
 
@@ -31,7 +31,7 @@ public class OldWorlds implements Listener {
         if (world == null) return;
 
         plugin.scheduler.runTaskLater(plugin, () -> {
-            BountifulAPI.sendTitle(p, 1, 4, 1, GREEN + world, GRAY + "The " + number + " World");
+            sendTitle(p, 20, 80, 20, GREEN + world, GRAY + "The " + number + " World");
             playCustomSound(p, "ZoneBell", .7f);
             p.sendMessage(GRAY + "Welcome to " + GREEN + world + GRAY + ", the " + number
                     + " world. You may " + GREEN + "fly" + GRAY + " here.");
@@ -63,6 +63,11 @@ public class OldWorlds implements Listener {
                 p.setAllowFlight(true);
 
                 sendWorldMessage(p, "Ak", "Second");
+            } else if (plateLocation.equals(plugin.taanPlate)) {
+                p.teleport(plugin.taan);
+                p.setAllowFlight(true);
+
+                sendWorldMessage(p, "Taan", "Fourth");
             }
         } else {
             e.setCancelled(true);
@@ -86,13 +91,17 @@ public class OldWorlds implements Listener {
                 info[0] = "Sanya";
                 info[1] = "First";
                 return info;
-            case "world_blight":
+            case "world_loka":
                 info[0] = "Ak";
                 info[1] = "Second";
                 return info;
             case "world3":
                 info[0] = "Da";
                 info[1] = "Third";
+                return info;
+            case "fourthworld":
+                info[0] = "Taan";
+                info[1] = "Fourth";
                 return info;
         }
 
