@@ -12,7 +12,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import static com.connorlinfoot.bountifulapi.BountifulAPI.sendTitle;
 import static com.cryptite.lite.utils.SoundUtil.playCustomSound;
 import static org.bukkit.ChatColor.*;
 
@@ -31,7 +30,7 @@ public class OldWorlds implements Listener {
         if (world == null) return;
 
         plugin.scheduler.runTaskLater(plugin, () -> {
-            sendTitle(p, 20, 80, 20, GREEN + world, GRAY + "The " + number + " World");
+            p.sendTitle(GREEN + world, GRAY + "The " + number + " World", 20, 80, 20);
             playCustomSound(p, "ZoneBell", .7f);
             p.sendMessage(GRAY + "Welcome to " + GREEN + world + GRAY + ", the " + number
                     + " world. You may " + GREEN + "fly" + GRAY + " here.");
