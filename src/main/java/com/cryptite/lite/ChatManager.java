@@ -100,10 +100,10 @@ public class ChatManager implements CommandExecutor {
                 }
                 break;
             case "town":
-                townChatMessage(p, message);
+//                townChatMessage(p, message);
                 break;
             case "alliance":
-                allianceChatMessage(p, message);
+//                allianceChatMessage(p, message);
                 break;
             case "admin":
                 adminChatMessage(p, message);
