@@ -95,11 +95,8 @@ public class ChatManager implements CommandExecutor {
         Account p = plugin.getAccount(player);
         switch (channel) {
             case "public":
-                if (plugin.oldWorlds == null) {
+                if (plugin.oldWorlds == null)
                     globalChatMessage(p, message);
-                } else {
-                    return;
-                }
                 break;
             case "town":
 //                townChatMessage(p, message);
@@ -115,7 +112,7 @@ public class ChatManager implements CommandExecutor {
                 break;
         }
 
-        if (outgoing) {
+        if (outgoing && plugin.oldWorlds == null) {
             //Send to network
             Chat chat = new Chat(player, channel, message);
             plugin.mq.publish(CHAT_TOPIC, new Gson().toJson(chat));
