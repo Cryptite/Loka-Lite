@@ -20,7 +20,7 @@ public class OldWorlds implements Listener {
     public void sendPlayer(Player p, String world) {
         switch (world) {
             case "world1":
-                if (p.getWorld().equals(plugin.sanya.getWorld())) {
+                if (!p.getWorld().equals(plugin.sanya.getWorld())) {
                     p.teleport(plugin.sanya);
                 }
 
@@ -28,7 +28,7 @@ public class OldWorlds implements Listener {
                 sendWorldMessage(p, "Sanya", "First");
                 break;
             case "world2":
-                if (p.getWorld().equals(plugin.da.getWorld())) {
+                if (!p.getWorld().equals(plugin.da.getWorld())) {
                     p.teleport(plugin.da);
                 }
 
@@ -36,7 +36,7 @@ public class OldWorlds implements Listener {
                 sendWorldMessage(p, "Da", "Third");
                 break;
             case "world3":
-                if (p.getWorld().equals(plugin.ak.getWorld())) {
+                if (!p.getWorld().equals(plugin.ak.getWorld())) {
                     p.teleport(plugin.ak);
                 }
 
@@ -44,7 +44,7 @@ public class OldWorlds implements Listener {
                 sendWorldMessage(p, "Ak", "Second");
                 break;
             case "world4":
-                if (p.getWorld().equals(plugin.taan.getWorld())) {
+                if (!p.getWorld().equals(plugin.taan.getWorld())) {
                     p.teleport(plugin.taan);
                 }
 
