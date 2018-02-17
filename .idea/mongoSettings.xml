@@ -8,8 +8,11 @@
           <option name="password" value="chappie154" />
           <option name="serverUrls">
             <list>
-              <option value="steel.minecraftarium.com:27017" />
+              <option value="play.lokamc.com:27017" />
             </list>
+          </option>
+          <option name="sshTunnelingConfiguration">
+            <SshTunnelingConfiguration />
           </option>
           <option name="userDatabase" value="loka" />
           <option name="username" value="minecraft" />

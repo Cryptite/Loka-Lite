@@ -62,7 +62,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location sanya, ak, da, taan;
     public Location sanyaPlate, akPlate, daPlate, taanPlate;
     public OldWorlds oldWorlds;
-    MQ mq;
+    public MQ mq;
 
     public void onEnable() {
         pm = this.getServer().getPluginManager();

@@ -1,16 +1,11 @@
 package com.cryptite.lite.modules;
 
 import com.cryptite.lite.LokaLite;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import static com.cryptite.lite.utils.SoundUtil.playCustomSound;
 import static org.bukkit.ChatColor.*;
@@ -22,11 +17,44 @@ public class OldWorlds implements Listener {
         this.plugin = plugin;
     }
 
-    public void sendWorldMessage(Player p, String[] info) {
-        sendWorldMessage(p, info[0], info[1]);
+    public void sendPlayer(Player p, String world) {
+        switch (world) {
+            case "world1":
+                if (p.getWorld().equals(plugin.sanya.getWorld())) {
+                    p.teleport(plugin.sanya);
+                }
+
+                p.setAllowFlight(true);
+                sendWorldMessage(p, "Sanya", "First");
+                break;
+            case "world2":
+                if (p.getWorld().equals(plugin.da.getWorld())) {
+                    p.teleport(plugin.da);
+                }
+
+                p.setAllowFlight(true);
+                sendWorldMessage(p, "Da", "Third");
+                break;
+            case "world3":
+                if (p.getWorld().equals(plugin.ak.getWorld())) {
+                    p.teleport(plugin.ak);
+                }
+
+                p.setAllowFlight(true);
+                sendWorldMessage(p, "Ak", "Second");
+                break;
+            case "world4":
+                if (p.getWorld().equals(plugin.taan.getWorld())) {
+                    p.teleport(plugin.taan);
+                }
+
+                p.setAllowFlight(true);
+                sendWorldMessage(p, "Taan", "Fourth");
+                break;
+        }
     }
 
-    public void sendWorldMessage(Player p, String world, String number) {
+    private void sendWorldMessage(Player p, String world, String number) {
         if (world == null) return;
 
         plugin.scheduler.runTaskLater(plugin, () -> {
@@ -34,43 +62,8 @@ public class OldWorlds implements Listener {
             playCustomSound(p, "ZoneBell", .7f);
             p.sendMessage(GRAY + "Welcome to " + GREEN + world + GRAY + ", the " + number
                     + " world. You may " + GREEN + "fly" + GRAY + " here.");
-            p.sendMessage(GRAY + "You can return to the main hub at " + "any time by typing " + YELLOW + BOLD + "/hub");
+            p.sendMessage(GRAY + "You can return to the Loka at any time by typing " + YELLOW + BOLD + "/leave");
         }, 20);
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerInteract(PlayerInteractEvent e) {
-        //Skydiving Achievement
-        if (e.getAction().equals(Action.PHYSICAL)
-                && e.getClickedBlock().getType().equals(Material.STONE_PLATE)) {
-
-            Location plateLocation = e.getClickedBlock().getLocation();
-            Player p = e.getPlayer();
-
-            if (plateLocation.equals(plugin.sanyaPlate)) {
-                p.teleport(plugin.sanya);
-                p.setAllowFlight(true);
-
-                sendWorldMessage(p, "Sanya", "First");
-            } else if (plateLocation.equals(plugin.daPlate)) {
-                p.teleport(plugin.da);
-                p.setAllowFlight(true);
-
-                sendWorldMessage(p, "Da", "Third");
-            } else if (plateLocation.equals(plugin.akPlate)) {
-                p.teleport(plugin.ak);
-                p.setAllowFlight(true);
-
-                sendWorldMessage(p, "Ak", "Second");
-            } else if (plateLocation.equals(plugin.taanPlate)) {
-                p.teleport(plugin.taan);
-                p.setAllowFlight(true);
-
-                sendWorldMessage(p, "Taan", "Fourth");
-            }
-        } else {
-            e.setCancelled(true);
-        }
     }
 
     @EventHandler

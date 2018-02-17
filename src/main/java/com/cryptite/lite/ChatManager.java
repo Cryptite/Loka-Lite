@@ -97,6 +97,8 @@ public class ChatManager implements CommandExecutor {
             case "public":
                 if (plugin.oldWorlds == null) {
                     globalChatMessage(p, message);
+                } else {
+                    return;
                 }
                 break;
             case "town":
