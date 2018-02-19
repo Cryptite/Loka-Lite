@@ -1,6 +1,7 @@
 package com.cryptite.lite.modules;
 
 import com.cryptite.lite.LokaLite;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +25,7 @@ public class OldWorlds implements Listener {
                     p.teleport(plugin.sanya);
                 }
 
+                p.setGameMode(GameMode.ADVENTURE);
                 p.setAllowFlight(true);
                 sendWorldMessage(p, "Sanya", "First");
                 break;
@@ -32,6 +34,7 @@ public class OldWorlds implements Listener {
                     p.teleport(plugin.ak);
                 }
 
+                p.setGameMode(GameMode.ADVENTURE);
                 p.setAllowFlight(true);
                 sendWorldMessage(p, "Ak", "Second");
                 break;
@@ -40,6 +43,7 @@ public class OldWorlds implements Listener {
                     p.teleport(plugin.da);
                 }
 
+                p.setGameMode(GameMode.ADVENTURE);
                 p.setAllowFlight(true);
                 sendWorldMessage(p, "Da", "Third");
                 break;
@@ -48,6 +52,7 @@ public class OldWorlds implements Listener {
                     p.teleport(plugin.taan);
                 }
 
+                p.setGameMode(GameMode.ADVENTURE);
                 p.setAllowFlight(true);
                 sendWorldMessage(p, "Taan", "Fourth");
                 break;
