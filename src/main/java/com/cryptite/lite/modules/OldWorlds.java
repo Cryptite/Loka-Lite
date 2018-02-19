@@ -28,20 +28,20 @@ public class OldWorlds implements Listener {
                 sendWorldMessage(p, "Sanya", "First");
                 break;
             case "world2":
-                if (!p.getWorld().equals(plugin.da.getWorld())) {
-                    p.teleport(plugin.da);
-                }
-
-                p.setAllowFlight(true);
-                sendWorldMessage(p, "Da", "Third");
-                break;
-            case "world3":
                 if (!p.getWorld().equals(plugin.ak.getWorld())) {
                     p.teleport(plugin.ak);
                 }
 
                 p.setAllowFlight(true);
                 sendWorldMessage(p, "Ak", "Second");
+                break;
+            case "world3":
+                if (!p.getWorld().equals(plugin.da.getWorld())) {
+                    p.teleport(plugin.da);
+                }
+
+                p.setAllowFlight(true);
+                sendWorldMessage(p, "Da", "Third");
                 break;
             case "world4":
                 if (!p.getWorld().equals(plugin.taan.getWorld())) {
