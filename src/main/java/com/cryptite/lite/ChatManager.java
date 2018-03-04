@@ -114,7 +114,7 @@ public class ChatManager implements CommandExecutor {
 
         if (outgoing && plugin.oldWorlds == null) {
             //Send to network
-            Chat chat = new Chat(player, channel, message);
+            Chat chat = new Chat(plugin.serverName, player, channel, message);
             plugin.mq.publish(CHAT_TOPIC, new Gson().toJson(chat));
         }
     }
