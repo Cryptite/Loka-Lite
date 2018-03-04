@@ -1,7 +1,6 @@
 package com.cryptite.lite;
 
 import com.cryptite.lite.db.Chat;
-import com.google.gson.Gson;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -80,6 +79,8 @@ public class ChatManager implements CommandExecutor {
     }
 
     private void onChatReceived(Chat chat) {
+        if (chat.server.equalsIgnoreCase(plugin.serverName)) return;
+
         sendMessage(chat, false);
     }
 
@@ -115,7 +116,7 @@ public class ChatManager implements CommandExecutor {
         if (outgoing && plugin.oldWorlds == null) {
             //Send to network
             Chat chat = new Chat(plugin.serverName, player, channel, message);
-            plugin.mq.publish(CHAT_TOPIC, new Gson().toJson(chat));
+            plugin.mq.publish(CHAT_TOPIC, chat);
         }
     }
 
