@@ -20,7 +20,7 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler
-    public void onIgnote(BlockIgniteEvent e) {
+    public void onIgnite(BlockIgniteEvent e) {
         e.setCancelled(true);
     }
 }

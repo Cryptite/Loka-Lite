@@ -90,7 +90,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         pm.registerEvents(new PlayerQuitListener(this), this);
         pm.registerEvents(new PlayerChatListener(this), this);
         pm.registerEvents(new PlayerWorldListener(this), this);
-        pm.registerEvents(new BlockListener(this), this);
 
         initDbPool();
 
@@ -101,6 +100,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         if (!parseBoolean(config.get("settings.build", false))) {
             System.out.println("[SETTINGS] Interactions disabled");
             pm.registerEvents(new PlayerInteractListener(this), this);
+            pm.registerEvents(new BlockListener(this), this);
         } else {
             System.out.println("[SETTINGS] Interactions allowed");
         }
