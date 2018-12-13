@@ -8,10 +8,6 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.Selection;
-import mkremins.fanciful.FancyMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -27,7 +23,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static com.cryptite.lite.utils.LocationUtils.*;
+import static com.cryptite.lite.utils.LocationUtils.parseCoord;
 import static com.mongodb.MongoCredential.createMongoCRCredential;
 import static java.lang.Boolean.parseBoolean;
 import static org.bukkit.ChatColor.GRAY;
@@ -168,18 +164,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
         if (commandLabel.equalsIgnoreCase("pvp")) {
             if (args[0].equalsIgnoreCase("generic")) {
-            } else if (args[0].equalsIgnoreCase("scanchests")) {
-                WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
-                Selection sel = player != null ? worldEdit.getSelection(player) : null;
-                if (sel != null) {
-                    Map<Location, Map<String, Integer>> chests = scanChests(sel.getMinimumPoint(), sel.getMaximumPoint());
-                    for (Location l : chests.keySet()) {
-                        new FancyMessage("[TP]")
-                                .command("/pvp tp " + coordsToString(l))
-                                .then(" - " + chests.get(l).size() + " items")
-                                .send(player);
-                    }
-                }
+
             } else if (args[0].equalsIgnoreCase("tp")) {
                 player.teleport(parseCoord(this, args[1]));
             }
