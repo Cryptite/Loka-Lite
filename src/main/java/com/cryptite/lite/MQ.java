@@ -1,10 +1,10 @@
 package com.cryptite.lite;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +40,8 @@ public class MQ implements ShutdownListener {
     public MQ(LokaLite plugin, String host) {
         this.plugin = plugin;
         this.host = host;
+        heartbeat = new Heartbeat(plugin.serverName);
+        connect();
     }
 
     public void start() {
@@ -47,42 +49,38 @@ public class MQ implements ShutdownListener {
     }
 
     private void heartbeat() {
-        if (!isOffline()) {
+        try {
             publish(HEARTBEAT_TOPIC, heartbeat);
-        } else {
-            connect();
+        } catch (Exception e) {
+            LokaLite.log.info("[Network] Exception on heartbeat?: " + e.getClass().getTypeName() + ": " + e.getMessage());
         }
     }
 
     private synchronized void connect() {
-        if (isOffline()) {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(host);
-            factory.setRequestedHeartbeat(6);
+        if (!isOffline()) return;
 
-            try {
-                connection = factory.newConnection();
-                channel = connection.createChannel();
-                postConnectSetup();
-                System.out.println("[Network] connected to " + host);
-            } catch (IOException | TimeoutException e) {
-                if (!(e instanceof ConnectException)) {
-                    e.printStackTrace();
-                }
-            }
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(host);
+
+        try {
+            connection = factory.newConnection();
+            channel = connection.createChannel();
+            connection.addShutdownListener(this);
+
+            Map<String, Object> args = new HashMap<>();
+            args.put("x-message-ttl", 0);
+            declareQueue(HEARTBEAT_TOPIC, args);
+            subscribe(HEARTBEAT_TOPIC, Heartbeat.class, args, this::onHeartbeat);
+
+            LokaLite.log.info("[Network] connected to " + host);
+            closed = false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private synchronized boolean isOffline() {
-        return connection == null || !connection.isOpen() || !channel.isOpen();
-    }
-
-    private void postConnectSetup() throws IOException {
-        connection.addShutdownListener(this);
-        declareQueue(HEARTBEAT_TOPIC);
-        heartbeat = new Heartbeat(plugin.serverName);
-        subscribe(HEARTBEAT_TOPIC, Heartbeat.class, this::onHeartbeat);
-        subscriptions.forEach(Runnable::run);
+        return connection == null || closed;
     }
 
     private synchronized void onHeartbeat(Heartbeat h) {
@@ -93,104 +91,89 @@ public class MQ implements ShutdownListener {
         lastHeartbeats.put(h.server, LocalDateTime.now());
     }
 
-    public boolean isOnline(String server) {
-        LocalDateTime dt = lastHeartbeats.get(server);
-        return dt != null && Duration.between(dt, LocalDateTime.now()).compareTo(FIVE_SECONDS) <= 0;
-    }
-
-    private String declareQueue(String topic) throws IOException {
-        String queueName = channel.queueDeclare().getQueue();
-        channel.queueDeclare(topic, false, false, false, null);
+    private String declareQueue(String topic, Map<String, Object> args) throws IOException {
         channel.exchangeDeclare(topic, "fanout");
+        String queueName = plugin.serverName + "-" + topic;
+
+        channel.queueDeclare(queueName, false, true, true, args);
         channel.queueBind(queueName, topic, "");
         return queueName;
     }
 
     public <T> void publish(String topic, T message) {
-        if (isOffline()) {
-            System.out.println("[Network] Dropping send to topic " + topic + ", we're offline");
-        } else {
-            byte[] bytes = gson.toJson(message).getBytes();
-            try {
-                channel.basicPublish(topic, "", null, bytes);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                if (e.getMessage().contains("AlreadyClosedException")) {
-                    close();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        }
+        send("", topic, message);
     }
 
     public <T> void send(String destination, String topic, T message) {
-        if (isOffline()) {
-            System.out.println("[Network] Dropping send to topic " + topic + ", we're offline");
-        } else {
-            byte[] bytes = gson.toJson(message).getBytes();
-            try {
-                channel.basicPublish(topic, destination, null, bytes);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                if (e.getMessage().contains("AlreadyClosedException")) {
-                    close();
-                } else {
-                    e.printStackTrace();
-                }
-            }
+        sendMessage(destination, topic, message);
+    }
+
+    private <T> void sendMessage(String destination, String topic, T message) {
+        if (!connection.isOpen()) {
+            LokaLite.log.info("[Network] Connection is closed?");
+            return;
+        }
+
+        String json = gson.toJson(message);
+        byte[] bytes = json.getBytes();
+        try {
+            channel.basicPublish(topic, destination, null, bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public synchronized <T> void subscribe(String topic, Class<T> type, java.util.function.Consumer<T> callback) {
-        Runnable r = () -> {
-            System.out.println("[Network] " + topic + " running");
-            try {
-                String queue = declareQueue(topic);
+        subscribe(topic, type, null, callback);
+    }
 
-                Consumer consumer = new DefaultConsumer(channel) {
-                    @Override
-                    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-                                               byte[] body) throws IOException {
+    private synchronized <T> void subscribe(String topic, Class<T> type, Map<String, Object> args, java.util.function.Consumer<T> callback) {
+        try {
+            String queue = declareQueue(topic, args);
+
+            Consumer consumer = new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+                                           byte[] body) {
+                    try {
                         T message = gson.fromJson(new String(body), type);
                         callback.accept(message);
+                    } catch (JsonSyntaxException e) {
+                        LokaLite.log.info("Bad Json: " + new String(body));
+                        throw e;
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                };
+                }
+            };
 
-                channel.basicConsume(queue, true, consumer);
-                System.out.println("[Network] " + topic + " now consuming.");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
-        if (isOffline()) {
-            subscriptions.add(r);
-        } else {
-            r.run();
+            channel.basicConsume(queue, true, consumer);
+            LokaLite.log.info("[Network] " + topic + " subscribed to queue: " + queue + ".");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void close() {
+    void close() {
         try {
-            heartbeat.online = false;
-            publish(HEARTBEAT_TOPIC, heartbeat);
+            if (heartbeat != null) {
+                heartbeat.online = false;
+                publish(HEARTBEAT_TOPIC, heartbeat);
+            }
+
             closed = true;
-            if (channel.isOpen()) channel.close();
-            if (connection.isOpen()) connection.close();
+
+            if (channel != null && channel.isOpen()) channel.close();
+            if (connection != null && connection.isOpen()) connection.close();
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
-        System.out.println("[Network] Connection lost/closed");
+        LokaLite.log.info("[Network] Connection lost/closed");
     }
 
     @Override
     public void shutdownCompleted(ShutdownSignalException cause) {
-        channel = null;
-        connection = null;
-
-        if (!closed) {
-            System.out.println("Connection closing due to " + cause.getMessage());
-            connect();
-        }
+        LokaLite.log.info("[Network] Connection closing: " + cause.getMessage());
+        LokaLite.log.info("[Network] Connection closing reason: " + cause.getReason());
     }
 }

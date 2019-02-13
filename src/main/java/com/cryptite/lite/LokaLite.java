@@ -29,7 +29,7 @@ import static java.lang.Boolean.parseBoolean;
 import static org.bukkit.ChatColor.GRAY;
 
 public class LokaLite extends JavaPlugin implements CommandExecutor {
-    private final Logger log = Logger.getLogger("LokaLite");
+    public static final Logger log = Logger.getLogger("LokaLite");
 
     //Plugin or Server-based variables
     public Server server;
