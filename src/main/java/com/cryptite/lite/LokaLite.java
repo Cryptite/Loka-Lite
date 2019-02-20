@@ -109,20 +109,18 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         }
 
         String module = config.get("module", "");
-        switch (module) {
-            case "oldworlds":
-                sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
-                ak = new Location(server.getWorld("world_loka"), 329.5, 117, -139.5);
-                da = new Location(server.getWorld("world3"), -9144, 101, 4402);
-                taan = new Location(server.getWorld("fourthworld"), -74.5, 111, -74.5);
+        if ("oldworlds".equals(module)) {
+            sanya = new Location(server.getWorld("world_artifact"), -64, 81, 114, -90, 0);
+            ak = new Location(server.getWorld("world_loka"), 329.5, 117, -139.5);
+            da = new Location(server.getWorld("world3"), -9144, 101, 4402);
+            taan = new Location(server.getWorld("fourthworld"), -74.5, 111, -74.5);
 
-                sanyaPlate = new Location(world, 7, 63, -27);
-                akPlate = new Location(world, -7, 63, -13);
-                daPlate = new Location(world, -21, 63, -27);
+            sanyaPlate = new Location(world, 7, 63, -27);
+            akPlate = new Location(world, -7, 63, -13);
+            daPlate = new Location(world, -21, 63, -27);
 
-                oldWorlds = new OldWorlds(this);
-                pm.registerEvents(oldWorlds, this);
-                break;
+            oldWorlds = new OldWorlds(this);
+            pm.registerEvents(oldWorlds, this);
         }
 
         chatChannel = config.get("chat", "---");

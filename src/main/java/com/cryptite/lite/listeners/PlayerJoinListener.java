@@ -8,13 +8,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class PlayerJoinListener implements Listener {
-    private final Logger log = Logger.getLogger("Artifact-Join");
     private final LokaLite plugin;
     private Map<String, String> destinations = new HashMap<>();
 
@@ -29,6 +28,39 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerPreJoin(PlayerSpawnLocationEvent e) {
+        Player p = e.getPlayer();
+        if (plugin.oldWorlds != null) {
+            String destinaton = destinations.getOrDefault(p.getName(), null);
+            if (destinaton != null) {
+                switch (destinations.get(p.getName())) {
+                    case "world1":
+                        if (!p.getWorld().equals(plugin.sanya.getWorld())) {
+                            e.setSpawnLocation(plugin.sanya);
+                        }
+                        break;
+                    case "world2":
+                        if (!p.getWorld().equals(plugin.ak.getWorld())) {
+                            e.setSpawnLocation(plugin.ak);
+                        }
+                        break;
+                    case "world3":
+                        if (!p.getWorld().equals(plugin.da.getWorld())) {
+                            e.setSpawnLocation(plugin.da);
+                        }
+                        break;
+                    case "world4":
+                        if (!p.getWorld().equals(plugin.taan.getWorld())) {
+                            e.setSpawnLocation(plugin.taan);
+                        }
+                        break;
+                }
+                plugin.scheduler.runTaskLater(plugin, () -> plugin.oldWorlds.sendPlayer(p, destinations.get(p.getName())), 5);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         player.setHealth(20);
@@ -36,14 +68,7 @@ public class PlayerJoinListener implements Listener {
         player.setExp(0);
         player.setLevel(0);
 
-        if (plugin.oldWorlds != null) {
-            String destinaton = destinations.getOrDefault(player.getName(), null);
-            if (destinaton != null) {
-                plugin.scheduler.runTaskLater(plugin, () -> plugin.oldWorlds.sendPlayer(player, destinations.get(player.getName())), 5);
-            }
-        }
-
-        player.setAllowFlight(!player.getWorld().equals(plugin.spawn));
+        player.setAllowFlight(!player.getWorld().equals(plugin.spawn.getWorld()));
 
         String joinMsg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("joinmessage", ""));
         event.setJoinMessage(joinMsg.replace("<player>", event.getPlayer().getName()));

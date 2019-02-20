@@ -5,17 +5,13 @@ import com.google.gson.JsonSyntaxException;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class MQ implements ShutdownListener {
     private static final String HEARTBEAT_TOPIC = "heartbeat";
-    private static final Duration FIVE_SECONDS = Duration.ofSeconds(5);
     private final LokaLite plugin;
 
     private static class Heartbeat {
@@ -34,7 +30,6 @@ public class MQ implements ShutdownListener {
     private Channel channel;
     private Heartbeat heartbeat;
     private Map<String, LocalDateTime> lastHeartbeats = new HashMap<>();
-    private List<Runnable> subscriptions = new ArrayList<>();
     private boolean closed;
 
     public MQ(LokaLite plugin, String host) {
