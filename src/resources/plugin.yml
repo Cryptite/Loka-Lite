@@ -1,6 +1,6 @@
 name: LokaLite
 main: com.cryptite.lite.LokaLite
-version: 1.0
+version: 1.1
 author: Cryptite
 depend: [Multiverse-Core]
 commands:
