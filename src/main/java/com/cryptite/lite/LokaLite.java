@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static com.cryptite.lite.utils.LocationUtils.parseCoord;
-import static com.mongodb.MongoCredential.createMongoCRCredential;
+import static com.mongodb.MongoCredential.createScramSha1Credential;
 import static java.lang.Boolean.parseBoolean;
 import static org.bukkit.ChatColor.GRAY;
 
@@ -144,7 +144,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         MongoClient mongoClient;
         String username = config.get("db.user", "");
         String pass = config.get("db.password", "");
-        MongoCredential credential = createMongoCRCredential(username, "loka", pass.toCharArray());
+        MongoCredential credential = createScramSha1Credential(username, "loka", pass.toCharArray());
         mongoClient = new MongoClient(new ServerAddress("play.lokamc.com"), Arrays.asList(credential));
         db = mongoClient.getDB("loka");
     }
