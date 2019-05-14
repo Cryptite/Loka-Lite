@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Loka-Lite.iml" filepath="$PROJECT_DIR$/.idea/Loka-Lite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LokaLite.iml" filepath="$PROJECT_DIR$/LokaLite.iml" />
     </modules>
   </component>
 </project>
