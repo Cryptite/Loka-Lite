@@ -46,5 +46,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:mongo-java-driver:3.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:5.6.0" level="project" />
+    <orderEntry type="library" name="Maven: com.destroystokyo.paper:paper-api:1.15.1-R0.1-SNAPSHOT" level="project" />
   </component>
 </module>
