@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="paperclip">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/paperclip.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
