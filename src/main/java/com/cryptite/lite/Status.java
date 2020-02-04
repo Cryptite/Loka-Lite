@@ -3,7 +3,8 @@ package com.cryptite.lite;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,8 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Status implements Listener {
@@ -21,13 +22,15 @@ public class Status implements Listener {
     private DB db;
     private BukkitTask updateID;
 
-    private static class ServerList {
+    private class ServerList {
         private final String server;
-        private final List<String> players;
+        private final List<UUID> players;
 
-        public ServerList(String server, List<String> players) {
+        public ServerList(String server) {
             this.server = server;
-            this.players = players;
+            players = Bukkit.getOnlinePlayers().stream()
+                    .map(Entity::getUniqueId)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -42,9 +45,8 @@ public class Status implements Listener {
     void updatePlayers() {
         if (updateID != null) updateID.cancel();
 
-        List<String> players = new ArrayList<>(plugin.server.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
         updateID = plugin.scheduler.runTaskLaterAsynchronously(plugin,
-                () -> plugin.mq.publish(PLAYER_LIST_TOPIC, new ServerList(plugin.serverName, players)), 20 * 3);
+                () -> plugin.mq.publish(PLAYER_LIST_TOPIC, new ServerList(plugin.serverName)), 20 * 3);
     }
 
     void setReady(boolean ready) {
