@@ -1,8 +1,9 @@
 name: LokaLite
 main: com.cryptite.lite.LokaLite
 version: 1.1
+api-version: 1.15
 author: Cryptite
-depend: [Multiverse-Core]
+depend: [Multiverse-Core, LokaLib, LokaCore]
 commands:
   pvp:
      description: pvp?
@@ -16,15 +17,6 @@ commands:
   p:
      description: Public chat
      usage: /p
-  t:
-     description: Town chat
-     usage: /t
-  a:
-     description: Alliance chat
-     usage: /a
-  o:
-     description: Admin Chat
-     usage: /o
   shutdown:
        description: Sends all players back to Loka before restart
        usage: /shutdown

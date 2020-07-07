@@ -13,13 +13,15 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.lokamc.LokaCore.network;
+
 public class PlayerJoinListener implements Listener {
     private final LokaLite plugin;
     private Map<String, String> destinations = new HashMap<>();
 
     public PlayerJoinListener(LokaLite plugin) {
         this.plugin = plugin;
-        plugin.mq.subscribe("oldworld", OldWorld.class, this::receiveDestination);
+        network.subscribe("oldworld", OldWorld.class, this::receiveDestination);
     }
 
     private void receiveDestination(OldWorld world) {
@@ -76,7 +78,7 @@ public class PlayerJoinListener implements Listener {
         String msg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("welcomemessage", ""));
         player.sendMessage(msg);
 
-        plugin.getAccount(player.getName());
+        plugin.accounts.getAccount(player);
     }
 
     @EventHandler

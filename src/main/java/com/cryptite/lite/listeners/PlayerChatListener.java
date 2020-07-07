@@ -18,6 +18,6 @@ public class PlayerChatListener implements Listener {
         //Remove arena player from pool so they can be properly recreated next time they join.
         Player player = e.getPlayer();
         e.setCancelled(true);
-        plugin.chat.sendMessage(player.getName(), "", e.getMessage(), true);
+        plugin.chat.sendMessage(player.getName(), "", e.getMessage());
     }
 }
