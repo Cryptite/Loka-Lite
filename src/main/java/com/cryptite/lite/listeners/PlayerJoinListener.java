@@ -77,6 +77,7 @@ public class PlayerJoinListener implements Listener {
 
         String msg = ChatColor.translateAlternateColorCodes('&', plugin.config.get("welcomemessage", ""));
         player.sendMessage(msg);
+        plugin.accounts.getAccount(player).showChatChannel();
     }
 
     @EventHandler

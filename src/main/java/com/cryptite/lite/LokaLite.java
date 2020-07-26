@@ -4,6 +4,8 @@ import com.cryptite.lite.listeners.*;
 import com.cryptite.lite.modules.OldWorlds;
 import com.lokamc.ConfigFile;
 import com.lokamc.LokaCore;
+import com.lokamc.accounts.AccountManager;
+import com.lokamc.accounts.BaseAccountData;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -43,6 +45,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location sanyaPlate, akPlate, daPlate, taanPlate;
     public OldWorlds oldWorlds;
     public ConfigFile config;
+    public AccountManager<BaseAccountData, BaseAccountData> accounts;
 
     @Override
     public void onEnable() {
@@ -59,7 +62,8 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         pm.registerEvents(new PlayerQuitListener(), this);
         pm.registerEvents(new PlayerWorldListener(this), this);
 
-        db = LokaCore.connectDB(Collections.emptyList(), Collections.emptyList());
+        db = LokaCore.connectDB(Collections.emptyList(), Collections.singletonList(BaseAccountData.class));
+        accounts = new AccountManager<>(db, "players", BaseAccountData.class, data -> new BaseAccountData(db, data, "players"));
 
         //Config related stuff
         if (!config.getBool("settings.build", false)) {
