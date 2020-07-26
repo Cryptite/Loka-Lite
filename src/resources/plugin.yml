@@ -5,18 +5,12 @@ api-version: 1.15
 author: Cryptite
 depend: [Multiverse-Core, LokaLib, LokaCore]
 commands:
-  pvp:
-     description: pvp?
-     usage: /pvp
   leave:
      description: Leave the match
      usage: /leave
   hub:
      description: Go to world hub
      usage: /hub
-  p:
-     description: Public chat
-     usage: /p
   shutdown:
        description: Sends all players back to Loka before restart
        usage: /shutdown

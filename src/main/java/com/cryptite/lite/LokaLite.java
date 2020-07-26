@@ -3,16 +3,8 @@ package com.cryptite.lite;
 import com.cryptite.lite.listeners.*;
 import com.cryptite.lite.modules.OldWorlds;
 import com.lokamc.ConfigFile;
-import com.lokamc.accounts.AccountManager;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoClients;
+import com.lokamc.LokaCore;
 import com.mongodb.reactivestreams.client.MongoDatabase;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -25,20 +17,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import java.util.Collections;
 
-import static com.cryptite.lite.utils.LocationUtils.parseCoord;
-import static com.lokamc.LokaCore.baseCodecs;
 import static com.lokamc.LokaCore.bungee;
-import static com.mongodb.MongoCredential.createScramSha1Credential;
-import static java.util.Collections.singletonList;
 import static org.bukkit.ChatColor.GRAY;
 
 public class LokaLite extends JavaPlugin implements CommandExecutor {
-    public static final Logger log = Logger.getLogger("LokaLite");
-
     //Plugin or Server-based variables
     public Server server;
     public BukkitScheduler scheduler;
@@ -47,11 +31,9 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
     //Game variables
     public World world;
-    public final List<String> playersToReturn = new ArrayList<>();
 
     //Misc
     public Location spawn;
-    public ChatManager chat;
     public MongoDatabase db;
     public String serverName = "build";
     public String chatChannel = "---";
@@ -61,8 +43,8 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     public Location sanyaPlate, akPlate, daPlate, taanPlate;
     public OldWorlds oldWorlds;
     public ConfigFile config;
-    public AccountManager<AccountData, Account> accounts;
 
+    @Override
     public void onEnable() {
         pm = this.getServer().getPluginManager();
         server = getServer();
@@ -73,16 +55,11 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         world = server.getWorld("spawn");
         spawn = new Location(world, -6.5, 64, -54.5);
 
-        chat = new ChatManager(this);
-        getCommand("p").setExecutor(chat);
-
         pm.registerEvents(new PlayerJoinListener(this), this);
-        pm.registerEvents(new PlayerQuitListener(this), this);
-        pm.registerEvents(new PlayerChatListener(this), this);
+        pm.registerEvents(new PlayerQuitListener(), this);
         pm.registerEvents(new PlayerWorldListener(this), this);
 
-        initDbPool();
-        accounts = new AccountManager<>(db, "players", AccountData.class, data -> new Account(this, data));
+        db = LokaCore.connectDB(Collections.emptyList(), Collections.emptyList());
 
         //Config related stuff
         if (!config.getBool("settings.build", false)) {
@@ -121,41 +98,15 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
+    @Override
     public void onDisable() {
         for (Player p : server.getOnlinePlayers()) {
             p.sendMessage(GRAY + "This server is restarting for maintenance.");
-//            bungee.sendPlayer(p);
         }
     }
 
-    private void initDbPool() {
-        ConfigFile config = new ConfigFile(this, "config.yml");
-        MongoClient mongoClient;
-        String username = config.get("db.user", "");
-        String pass = config.get("db.password", "");
-        MongoCredential credential = createScramSha1Credential(username, "loka", pass.toCharArray());
-
-        CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(baseCodecs),
-                CodecRegistries.fromProviders(PojoCodecProvider.builder()
-                        .register(AccountData.class)
-                        .build()),
-                MongoClients.getDefaultCodecRegistry());
-
-        String host = config.get("db.host", "");
-        MongoClientSettings options = MongoClientSettings.builder()
-                .applyToClusterSettings(builder -> builder.hosts(singletonList(new ServerAddress(host))))
-                .codecRegistry(pojoCodecRegistry)
-                .credential(credential)
-                .build();
-
-        System.out.println("[DB] Connecting to " + host);
-        mongoClient = MongoClients.create(options);
-        db = mongoClient.getDatabase("loka");
-    }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd,
-                             String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         final Player player;
 
         if (sender instanceof Player) {
@@ -164,24 +115,13 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
             player = null;
         }
 
-        if (commandLabel.equalsIgnoreCase("pvp")) {
-            if (args[0].equalsIgnoreCase("generic")) {
-
-            } else if (args[0].equalsIgnoreCase("tp")) {
-                player.teleport(parseCoord(this, args[1]));
-            }
-        } else if (commandLabel.equalsIgnoreCase("leave")) {
+        if (commandLabel.equalsIgnoreCase("leave")) {
             bungee.sendPlayer(player, "loka");
         } else if (commandLabel.equalsIgnoreCase("hub")) {
             if (player != null && spawn != null) {
                 player.teleport(spawn);
                 player.setAllowFlight(false);
             }
-//        } else if (commandLabel.equalsIgnoreCase("shutdown")) {
-//            for (Player pl : server.getOnlinePlayers()) {
-//                pl.sendMessage(GRAY + "This server is restarting for maintenance.");
-//                bungee.sendPlayer(pl);
-//            }
         }
         return true;
     }
