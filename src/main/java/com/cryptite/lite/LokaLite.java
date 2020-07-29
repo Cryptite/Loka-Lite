@@ -37,7 +37,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
     //Misc
     public Location spawn;
     public MongoDatabase db;
-    public String serverName = "build";
     public String chatChannel = "---";
 
     //Warps
@@ -53,7 +52,6 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         server = getServer();
         scheduler = server.getScheduler();
         config = new ConfigFile(this, "config.yml");
-        serverName = config.get("servername", "build");
 
         world = server.getWorld("spawn");
         spawn = new Location(world, -6.5, 64, -54.5);
