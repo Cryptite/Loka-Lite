@@ -6,13 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Loka-Lite" />
         <module name="LokaLite" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Loka-Lite" target="1.8" />
-      <module name="LokaLite" target="1.8" />
+      <module name="LokaLite" target="14" />
     </bytecodeTargetLevel>
   </component>
 </project>

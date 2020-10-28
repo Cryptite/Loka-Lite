@@ -1,23 +1,20 @@
 
-]squid:S1161?":Add the "@Override" annotation above this method signature(âºˆ¾úÿÿÿÿ8Ÿ½‚¶-
-N
-squid:S106e"9Replace this use of System.out or System.err by a logger.(¢î°^
-T
-squid:S106l"9Replace this use of System.out or System.err by a logger.(ÕÅ”øÿÿÿÿ
-Asquid:S1659;"%Declare "akPlate" on a separate line.(Õ©¨—ùÿÿÿÿ
-Csquid:S1659;"'Declare "taanPlate" on a separate line.(Õ©¨—ùÿÿÿÿ
-7squid:S1659:" Declare "ak" on a separate line.(éæÛÿ
-Asquid:S1659;"%Declare "daPlate" on a separate line.(Õ©¨—ùÿÿÿÿ
-Xsquid:S1161…":Add the "@Override" annotation above this method signature(â¶œ48Ÿ½‚¶-
-fsquid:S2095”"IUse try-with-resources or close this "MongoClient" in a "finally" clause.(Ì¼øùÿÿÿÿ
-9squid:S1659:""Declare "taan" on a separate line.(éæÛÿ
-7squid:S1659:" Declare "da" on a separate line.(éæÛÿ
-T
-squid:S106a"9Replace this use of System.out or System.err by a logger.(®ºƒİüÿÿÿÿ
-U
-squid:S106‚"9Replace this use of System.out or System.err by a logger.(…Èèáıÿÿÿÿ
-Gsquid:S00108¤")Either remove or fill this block of code.(ÂÖ—Áüÿÿÿÿ
-O
-squid:S106i"9Replace this use of System.out or System.err by a logger.(¸°Ú¸
-asquid:S2259§"DA "NullPointerException" could be thrown; "player" is nullable here.(ü«ÀÀúÿÿÿÿ
-Vsquid:CallToDeprecatedMethod•"-Remove this use of "getDB"; it is deprecated.(õí¦
+G
+java:S1659,"%Declare "daPlate" on a separate line.(Õ©¨—ùÿÿÿÿ8¤­ÂÒ².
+Z	java:S106O"9Replace this use of System.out or System.err by a logger.(ÕÅ”øÿÿÿÿ8¤­ÂÒ².
+I
+java:S1659,"'Declare "taanPlate" on a separate line.(Õ©¨—ùÿÿÿÿ8¤­ÂÒ².
+Z	java:S106d"9Replace this use of System.out or System.err by a logger.(…Èèáıÿÿÿÿ8¤­ÂÒ².
+=
+java:S1659+" Declare "da" on a separate line.(éæÛÿ8¤­ÂÒ².
+Z	java:S106D"9Replace this use of System.out or System.err by a logger.(®ºƒİüÿÿÿÿ8¤­ÂÒ².
+U	java:S106L"9Replace this use of System.out or System.err by a logger.(¸°Ú¸8¤­ÂÒ².
+?
+java:S1659+""Declare "taan" on a separate line.(éæÛÿ8¤­ÂÒ².
+T	java:S106H"9Replace this use of System.out or System.err by a logger.(¢î°^8¤­ÂÒ².
+L
+java:S1066{"/Merge this if statement with the enclosing one.(Äµïç8¦ÏÜÒ².
+=
+java:S1659+" Declare "ak" on a separate line.(éæÛÿ8¤­ÂÒ².
+G
+java:S1659,"%Declare "akPlate" on a separate line.(Õ©¨—ùÿÿÿÿ8¤­ÂÒ².
