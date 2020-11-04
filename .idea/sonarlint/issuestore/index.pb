@@ -11,3 +11,7 @@ q
 Asrc/main/java/com/cryptite/lite/listeners/PlayerJoinListener.java,c\b\cbcd6a6503bb7b74b7ce6640c5a6908417be7ca8
 q
 Asrc/main/java/com/cryptite/lite/listeners/PlayerQuitListener.java,9\f\9f8d87b3b90b06b02e145411823a5866a8aedbce
+m
+=src/main/java/com/cryptite/lite/listeners/EntityListener.java,1\8\18ab662b9cf913580c74bc2f89a2db0e3b9da812
+l
+<src/main/java/com/cryptite/lite/listeners/BlockListener.java,7\e\7e80b7cfbeb9af3b994c9a8dd1948231341fa04a
