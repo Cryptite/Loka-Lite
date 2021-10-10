@@ -4,7 +4,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
   `java-library`
   `maven-publish`
-  id("io.papermc.paperweight.userdev") version "1.1.11"
+  id("io.papermc.paperweight.userdev") version "1.1.12"
   id("xyz.jpenilla.run-paper") version "1.0.4" // Adds runServer and runMojangMappedServer tasks for testing
   id("net.minecrell.plugin-yml.bukkit") version "0.5.0"
 }
@@ -17,10 +17,7 @@ repositories {
     mavenCentral()
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.dmulloy2.net/repository/public/")
-    maven {
-        url = uri("http://ysera.dyndns.org:8090/releases")
-        isAllowInsecureProtocol = true
-    }
+    maven("https://ysera.dyndns.org:444/releases")
 }
 
 dependencies {
@@ -47,7 +44,7 @@ tasks {
 }
 
 bukkit {
-  load = BukkitPluginDescription.PluginLoadOrder.STARTUP
+  load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
   main = "com.cryptite.lite.LokaLite"
   apiVersion = "1.17"
   authors = listOf("Cryptite")

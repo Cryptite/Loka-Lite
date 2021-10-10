@@ -17,7 +17,7 @@ import static com.lokamc.LokaCore.network;
 
 public class PlayerJoinListener implements Listener {
     private final LokaLite plugin;
-    private Map<String, String> destinations = new HashMap<>();
+    private final Map<String, String> destinations = new HashMap<>();
 
     public PlayerJoinListener(LokaLite plugin) {
         this.plugin = plugin;
