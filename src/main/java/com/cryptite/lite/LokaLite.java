@@ -67,12 +67,12 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         if (!config.getBool("settings.build", false)) {
             System.out.println("[SETTINGS] Interactions disabled");
             pm.registerEvents(new PlayerInteractListener(this), this);
-            pm.registerEvents(new BlockListener(this), this);
             pm.registerEvents(new EntityListener(this), this);
         } else {
             System.out.println("[SETTINGS] Interactions allowed");
         }
 
+        pm.registerEvents(new BlockListener(this), this);
         if (!config.getBool("settings.pvp", false)) {
             System.out.println("[SETTINGS] PvP disabled");
             pm.registerEvents(new PlayerDamageListener(), this);

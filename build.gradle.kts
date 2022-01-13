@@ -1,11 +1,10 @@
-import org.gradle.api.publish.PublishingExtension
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
   `java-library`
   `maven-publish`
-  id("io.papermc.paperweight.userdev") version "1.1.12"
-  id("xyz.jpenilla.run-paper") version "1.0.4" // Adds runServer and runMojangMappedServer tasks for testing
+  id("io.papermc.paperweight.userdev") version "1.1.14"
+    id("xyz.jpenilla.run-paper") version "1.0.4" // Adds runServer and runMojangMappedServer tasks for testing
   id("net.minecrell.plugin-yml.bukkit") version "0.5.0"
 }
 
@@ -22,7 +21,7 @@ repositories {
 
 dependencies {
     paperDevBundle("1.17.1-R0.1-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.8")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.6.0")
     compileOnly("com.lokamc.LokaLib:LokaLib:2.0")
     compileOnly("com.lokamc.LokaCore:LokaCore:2.0:dev-all")
