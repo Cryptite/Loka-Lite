@@ -23,8 +23,8 @@ dependencies {
     paperDevBundle("1.17.1-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.8")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.6.0")
-    compileOnly("com.lokamc.LokaLib:LokaLib:2.0")
-    compileOnly("com.lokamc.LokaCore:LokaCore:2.0:dev-all")
+    compileOnly("com.lokamc:LokaLib:2.0")
+    compileOnly("com.lokamc:LokaCore:2.2:dev-all")
 }
 
 tasks {

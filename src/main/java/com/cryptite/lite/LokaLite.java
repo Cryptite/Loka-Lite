@@ -119,7 +119,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         }
 
         if (commandLabel.equalsIgnoreCase("leave")) {
-            bungee.sendPlayer(player, "loka");
+            bungee.returnPlayer(player, "loka");
         } else if (commandLabel.equalsIgnoreCase("hub")) {
             if (player != null && spawn != null) {
                 player.teleport(spawn);
