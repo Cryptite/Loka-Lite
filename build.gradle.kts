@@ -2,29 +2,29 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
   `java-library`
-  `maven-publish`
-  id("io.papermc.paperweight.userdev") version "1.1.14"
-    id("xyz.jpenilla.run-paper") version "1.0.4" // Adds runServer and runMojangMappedServer tasks for testing
-  id("net.minecrell.plugin-yml.bukkit") version "0.5.0"
+    `maven-publish`
+    id("io.papermc.paperweight.userdev") version "1.3.8"
+    id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
 }
 
 group = "com.cryptite.lite"
-version = "2.0"
+version = "2.1"
 description = "LokaLite Plugin"
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.dmulloy2.net/repository/public/")
-    maven("https://ysera.dyndns.org:444/releases")
 }
 
 dependencies {
-    paperDevBundle("1.17.1-R0.1-SNAPSHOT")
+    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.8")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.6.0")
-    compileOnly("com.lokamc:LokaLib:2.0")
-    compileOnly("com.lokamc:LokaCore:2.2:dev-all")
+    compileOnly("com.lokamc:LokaLib:2.2")
+    compileOnly("com.lokamc:LokaCore:2.3:dev-all")
 }
 
 tasks {
@@ -35,7 +35,7 @@ tasks {
 
   compileJava {
     options.encoding = Charsets.UTF_8.name()
-    options.release.set(16)
+      options.release.set(17)
   }
   javadoc {
     options.encoding = Charsets.UTF_8.name()
@@ -44,9 +44,9 @@ tasks {
 
 bukkit {
   load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
-  main = "com.cryptite.lite.LokaLite"
-  apiVersion = "1.17"
-  authors = listOf("Cryptite")
+    main = "com.cryptite.lite.LokaLite"
+    apiVersion = "1.19"
+    authors = listOf("Cryptite")
   depend = listOf("LokaLib", "LokaCore", "Multiverse-Core")
   commands {
           register("leave") {
