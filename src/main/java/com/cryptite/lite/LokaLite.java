@@ -6,7 +6,7 @@ import com.lokamc.ConfigFile;
 import com.lokamc.LokaCore;
 import com.lokamc.accounts.AccountManager;
 import com.lokamc.accounts.BaseAccountData;
-import com.mongodb.reactivestreams.client.MongoDatabase;
+import com.lokamc.db.LokaDB;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -36,7 +36,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
 
     //Misc
     public Location spawn;
-    public MongoDatabase db;
+    public LokaDB db;
     public String chatChannel = "---";
 
     //Warps
