@@ -3,13 +3,13 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
   `java-library`
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.3.11"
-    id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("io.papermc.paperweight.userdev") version "1.5.4"
+    id("xyz.jpenilla.run-paper") version "2.0.1" // Adds runServer and runMojangMappedServer tasks for testing
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 group = "com.cryptite.lite"
-version = "2.1"
+version = "2.2"
 description = "LokaLite Plugin"
 
 repositories {
@@ -20,11 +20,10 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.8")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.6.0")
-    compileOnly("com.lokamc:LokaLib:2.3")
-    compileOnly("com.lokamc:LokaCore:2.4:dev-all")
+    paperDevBundle("1.19.4-R0.1-SNAPSHOT")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9")
+    compileOnly("com.lokamc:LokaLib:2.4")
+    compileOnly("com.lokamc:LokaCore:2.5:dev-all")
 }
 
 tasks {
