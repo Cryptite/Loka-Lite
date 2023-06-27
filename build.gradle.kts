@@ -3,8 +3,8 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
   `java-library`
     `maven-publish`
-    id("io.papermc.paperweight.userdev") version "1.5.4"
-    id("xyz.jpenilla.run-paper") version "2.0.1" // Adds runServer and runMojangMappedServer tasks for testing
+    id("io.papermc.paperweight.userdev") version "1.5.5"
+    id("xyz.jpenilla.run-paper") version "2.1.0" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
@@ -20,10 +20,10 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.19.4-R0.1-SNAPSHOT")
+    paperDevBundle("1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9")
-    compileOnly("com.lokamc:LokaLib:2.4")
-    compileOnly("com.lokamc:LokaCore:2.5:dev-all")
+    compileOnly("com.lokamc:LokaLib:2.5")
+    compileOnly("com.lokamc:LokaCore:2.6:dev-all")
 }
 
 tasks {
