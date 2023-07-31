@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.HashMap;
@@ -27,6 +28,15 @@ public class PlayerJoinListener implements Listener {
     private void receiveDestination(OldWorld world) {
         destinations.put(world.name, world.world);
         System.out.println(world.name + " should go to " + world.world);
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent e) {
+        if (e.getPlayer().isOp()) {
+            if (e.getReason().contains("chat packet") || e.getReason().contains("packet rate")) {
+                e.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
