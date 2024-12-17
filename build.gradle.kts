@@ -2,13 +2,13 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
   `java-library`
-    id("io.papermc.paperweight.userdev") version "1.5.11"
-    id("xyz.jpenilla.run-paper") version "2.2.0" // Adds runServer and runMojangMappedServer tasks for testing
+    id("io.papermc.paperweight.userdev") version "1.7.4"
+    id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 group = "com.cryptite.lite"
-version = "2.3"
+version = "2.4"
 description = "LokaLite Plugin"
 
 repositories {
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+    paperweightDevBundle("com.lokamc.slice", "1.21.3-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT")
     compileOnly("com.lokamc:LokaLib:2.7")
     compileOnly("com.lokamc:LokaCore:2.7:dev-all")
@@ -32,8 +32,11 @@ tasks {
   }
 
   compileJava {
-    options.encoding = Charsets.UTF_8.name()
-      options.release.set(17)
+      options.encoding = Charsets.UTF_8.name()
+      options.release.set(21)
+
+      val compilerArgs = options.compilerArgs
+      compilerArgs.add("-parameters")
   }
   javadoc {
     options.encoding = Charsets.UTF_8.name()
@@ -43,7 +46,7 @@ tasks {
 bukkit {
   load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.cryptite.lite.LokaLite"
-    apiVersion = "1.20"
+    apiVersion = "1.21"
     authors = listOf("Cryptite")
   depend = listOf("LokaLib", "LokaCore", "Multiverse-Core")
   commands {
