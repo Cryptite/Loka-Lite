@@ -2,7 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
   `java-library`
-    id("io.papermc.paperweight.userdev") version "1.7.4"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.14"
     id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
@@ -19,18 +19,13 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("com.lokamc.slice", "1.21.3-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT", "fork.test")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT")
     compileOnly("com.lokamc:LokaLib:2.9")
-    compileOnly("com.lokamc:LokaCore:3.3:dev-all")
+    compileOnly("com.lokamc:LokaCore:3.3:all")
 }
 
 tasks {
-  // Run reobfJar on build
-  build {
-    dependsOn(reobfJar)
-  }
-
   compileJava {
       options.encoding = Charsets.UTF_8.name()
       options.release.set(21)
