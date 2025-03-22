@@ -21,8 +21,8 @@ repositories {
 dependencies {
     paperweightDevBundle("com.lokamc.slice", "1.21.3-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT")
-    compileOnly("com.lokamc:LokaLib:2.7")
-    compileOnly("com.lokamc:LokaCore:2.7:dev-all")
+    compileOnly("com.lokamc:LokaLib:2.9")
+    compileOnly("com.lokamc:LokaCore:3.3:dev-all")
 }
 
 tasks {
