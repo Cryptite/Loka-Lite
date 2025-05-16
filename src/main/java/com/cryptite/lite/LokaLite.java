@@ -7,6 +7,7 @@ import com.lokamc.LokaCore;
 import com.lokamc.accounts.AccountManager;
 import com.lokamc.accounts.BaseAccountData;
 import com.lokamc.db.LokaDB;
+import com.lokamc.network.OnlineStatus;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -20,8 +21,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
-import static com.lokamc.LokaCore.bungee;
+import static com.lokamc.LokaCore.*;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static org.bukkit.ChatColor.GRAY;
 
 public class LokaLite extends JavaPlugin implements CommandExecutor {
@@ -95,6 +98,13 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
             pm.registerEvents(oldWorlds, this);
         }
 
+        network.updateServerStatus(OnlineStatus.ONLINE);
+        newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            if (shuttingDown) return;
+
+            network.updateServerStatus(OnlineStatus.ONLINE);
+        }, 0, 15, TimeUnit.SECONDS);
+
         chatChannel = config.get("chat", "---");
 
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -119,7 +129,7 @@ public class LokaLite extends JavaPlugin implements CommandExecutor {
         }
 
         if (commandLabel.equalsIgnoreCase("leave")) {
-            bungee.returnPlayer(player, "loka");
+            bungee.sendPlayer(player, "loka");
         } else if (commandLabel.equalsIgnoreCase("hub")) {
             if (player != null && spawn != null) {
                 player.teleport(spawn);
